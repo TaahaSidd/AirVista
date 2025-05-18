@@ -1,6 +1,6 @@
 package com.AV.AirVista.Model;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Flight {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +25,8 @@ public class Flight {
     private String flighnumber;
     private String origin;
     private String destination;
-    private LocalTime deptTime;
-    private LocalTime arrTime;
-    private int seats;
+    private LocalDateTime deptTime;
+    private LocalDateTime arrTime;
+    private Integer seats;
     private double price;
 }

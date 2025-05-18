@@ -1,6 +1,6 @@
 package com.AV.AirVista.Dto;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -29,13 +29,13 @@ public class FlightDto {
     @NotBlank(message = " Destination is required")
     private String destination;
     @NotNull(message = "Departure time is required")
-    private LocalTime depTime;
+    private LocalDateTime depTime;
 
     @NotNull(message = "Arrival time is required")
-    private LocalTime arrTime;
+    private LocalDateTime arrTime;
 
     @Min(value = 1, message = "Seats must be at least 1")
-    private int seats;
+    private Integer seats;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Price must be zero or positive")
     private double price;
