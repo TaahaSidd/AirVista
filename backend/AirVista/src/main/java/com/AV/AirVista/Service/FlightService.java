@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.FlightDto;
+import com.AV.AirVista.Model.Airport;
 import com.AV.AirVista.Model.Flight;
+import com.AV.AirVista.Repository.AirportRepo;
 import com.AV.AirVista.Repository.FlightRepo;
 
 @Service
@@ -18,12 +20,22 @@ public class FlightService {
     @Autowired
     private FlightRepo flightRepo;
 
+    @Autowired
+    private AirportRepo airportRepo;
+
     public ResponseEntity<Flight> addFlight(FlightDto req) {
+
+        Airport origin = airportRepo.findById(req.getOriginId())
+                .orElseThrow(() -> new RuntimeException("Origin airport not found"));
+
+        Airport destination = airportRepo.findById(req.getDestinationId())
+                .orElseThrow(() -> new RuntimeException("Destination airport not found"));
+
         Flight flight = new Flight();
 
-        flight.setFlighnumber(req.getFlightNumber());
-        flight.setOrigin(req.getOrigin());
-        flight.setDestination(req.getDestination());
+        flight.setFlightNumber(req.getFlightNumber());
+        flight.setOrigin(origin);
+        flight.setDestination(destination);
         flight.setDeptTime(req.getDepTime());
         flight.setArrTime(req.getArrTime());
         flight.setSeats(req.getSeats());
@@ -41,14 +53,20 @@ public class FlightService {
         if (flightOpt.isEmpty())
             return ResponseEntity.notFound().build();
 
+        Airport origin = airportRepo.findById(req.getOriginId())
+                .orElseThrow(() -> new RuntimeException("Origin airport not found"));
+
+        Airport destination = airportRepo.findById(req.getDestinationId())
+                .orElseThrow(() -> new RuntimeException("Destination airport not found"));
+
         Flight flight = flightOpt.get();
 
         if (req.getFlightNumber() != null)
-            flight.setFlighnumber(req.getFlightNumber());
-        if (req.getOrigin() != null)
-            flight.setOrigin(req.getOrigin());
-        if (req.getDestination() != null)
-            flight.setDestination(req.getDestination());
+            flight.setFlightNumber(req.getFlightNumber());
+        if (origin != null)
+            flight.setOrigin(origin);
+        if (destination != null)
+            flight.setDestination(destination);
         if (req.getDepTime() != null)
             flight.setDeptTime(req.getDepTime());
         if (req.getArrTime() != null)
@@ -70,11 +88,26 @@ public class FlightService {
         return ResponseEntity.ok("Flight deleted successfully with id" + id);
     }
 
-    public ResponseEntity<List<Flight>> sesarchFlights(String origin, String destination, LocalDate date) {
-        return ResponseEntity.ok(flightRepo.searchFlights(origin, destination, date));
+    public List<Flight> searchFlights(String origin, String destination, LocalDate date) {
+        return flightRepo.searchFlights(origin, destination, date);
     }
 
-    public List<Flight> getAllFlights(){
+    public List<Flight> getAllFlights() {
         return flightRepo.findAll();
+    }
+
+    public FlightDto toDto(Flight flight) {
+        return FlightDto.builder()
+                .id(flight.getId())
+                .flightNumber(flight.getFlightNumber())
+                .originId(flight.getOrigin().getId())
+                .originCode(flight.getOrigin().getCode())
+                .destinationId(flight.getDestination().getId())
+                .destinationCode(flight.getDestination().getCode())
+                .depTime(flight.getDeptTime())
+                .arrTime(flight.getArrTime())
+                .seats(flight.getSeats())
+                .price(flight.getPrice())
+                .build();
     }
 }

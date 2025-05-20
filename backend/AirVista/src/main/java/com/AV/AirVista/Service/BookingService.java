@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.BookingDto;
 import com.AV.AirVista.Model.Booking;
+import com.AV.AirVista.Model.Flight;
+import com.AV.AirVista.Model.Passenger;
 import com.AV.AirVista.Repository.BookingRepo;
+import com.AV.AirVista.Repository.FlightRepo;
+import com.AV.AirVista.Repository.PassengerRepo;
 
 @Service
 public class BookingService {
@@ -17,11 +21,23 @@ public class BookingService {
     @Autowired
     private BookingRepo bookingRepo;
 
-    public ResponseEntity<Booking> addBooking(BookingDto req) {
-        Booking booking = new Booking();
+    @Autowired
+    private FlightRepo flightRepo;
 
-        booking.setFlight(req.getFlight());
-        booking.setPassenger(req.getPassenger());
+    @Autowired
+    private PassengerRepo passengerRepo;
+
+    public ResponseEntity<Booking> addBooking(BookingDto req) {
+
+        Flight flight = flightRepo.findById(req.getId())
+                .orElseThrow(() -> new RuntimeException("Flight not found with id" + req.getId()));
+
+        Passenger passenger = passengerRepo.findById(req.getId())
+                .orElseThrow(() -> new RuntimeException("Passenger not Found with id" + req.getId()));
+
+        Booking booking = new Booking();
+        booking.setFlight(flight);
+        booking.setPassenger(passenger);
         booking.setBookingDate(req.getBookingDate());
         booking.setStatus(req.getStatus());
 

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,19 +16,23 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FlightDto {
 
     @NotNull(message = "Id is required")
     private Long id;
 
+    private Long originId;
+    private Long destinationId;
+
     @NotNull(message = "Flight number is required")
     private String flightNumber;
 
     @NotBlank(message = "Origin is required")
-    private String origin;
+    private String originCode;
 
     @NotBlank(message = " Destination is required")
-    private String destination;
+    private String destinationCode;
     @NotNull(message = "Departure time is required")
     private LocalDateTime depTime;
 

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.UserDto;
@@ -48,8 +48,8 @@ public class UserService {
     }
 
     // Update
-    public ResponseEntity<User> updateUser(String email, UserDto req) {
-        Optional<User> userOptional = userRepo.findByEmail(email);
+    public ResponseEntity<User> updateUser(Long id, UserDto req) {
+        Optional<User> userOptional = userRepo.findById(id);
 
         if (userOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
