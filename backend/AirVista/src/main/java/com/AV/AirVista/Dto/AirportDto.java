@@ -19,6 +19,7 @@ public class AirportDto {
 
     @NotBlank(message = "Airport code cannot be null")
     private String code;
+    
     private String city;
     private String country;
 }

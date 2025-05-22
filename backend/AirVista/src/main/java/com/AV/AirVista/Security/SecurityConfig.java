@@ -10,10 +10,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
+                        .requestMatchers("/AirVista/**").permitAll()
+                        .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable());
         return http.build();
     }

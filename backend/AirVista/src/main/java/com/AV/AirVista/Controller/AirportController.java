@@ -4,27 +4,23 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.AV.AirVista.Dto.AirportDto;
+import com.AV.AirVista.Model.Airport;
 import com.AV.AirVista.Service.AirportService;
 
 import jakarta.validation.Valid;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.AV.AirVista.Dto.AirportDto;
-import com.AV.AirVista.Model.Airport;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 @RestController
-@RequestMapping("/Airport")
+@RequestMapping("AirVista/Airport")
 public class AirportController {
 
     @Autowired
@@ -35,8 +31,8 @@ public class AirportController {
         return airportService.addAirport(req);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Airport> getAirportById(@Valid @RequestParam Long id) {
+    @GetMapping("byId/{id}")
+    public ResponseEntity<Airport> getAirportById(@Valid @PathVariable Long id) {
         Airport airport = airportService.getAirportById(id);
         if (airport == null)
             return ResponseEntity.notFound().build();
@@ -44,8 +40,8 @@ public class AirportController {
         return ResponseEntity.ok(airport);
     }
 
-    @GetMapping("/{code}")
-    public ResponseEntity<Airport> getAirportByCode(@RequestParam String code) {
+    @GetMapping("code/{code}")
+    public ResponseEntity<Airport> getAirportByCode(@PathVariable String code) {
         return airportService.getAirportByCode(code)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -57,7 +53,7 @@ public class AirportController {
         return ResponseEntity.ok(airports);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<Airport> updateAiport(@PathVariable Long id, @Valid @RequestBody AirportDto req) {
         return airportService.updateAirport(req, id);
     }

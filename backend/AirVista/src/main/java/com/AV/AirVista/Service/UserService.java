@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,11 @@ public class UserService {
 
     // Add
     public ResponseEntity<User> addUser(UserDto req) {
+
+        if (userRepo.findByEmail(req.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         User user = new User();
 
         String hashPassword = passwordEncoder.encode(req.getPassword());
@@ -37,14 +43,14 @@ public class UserService {
     }
 
     // Get user by id.
-    public User getUserById(Long id) {
-        return userRepo.findById(id).orElse(null);
+    public Optional<User> getUserById(Long id) {
+        return userRepo.findById(id);
     }
 
     // Get user by email.
-    public User getUerByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not with email" + email));
+                .orElseThrow(() -> new UsernameNotFoundException("User not with email  " + email));
     }
 
     // Update
@@ -56,14 +62,19 @@ public class UserService {
         }
 
         User user = userOptional.get();
-        String hashPassword = passwordEncoder.encode(req.getPassword());
-
+        if (req.getEmail() != null && !req.getEmail().equals(user.getEmail())) {
+            if (userRepo.findByEmail(req.getEmail()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+        }
         if (req.getName() != null)
             user.setName(req.getName());
         if (req.getEmail() != null)
             user.setEmail(req.getEmail());
-        if (req.getPassword() != null)
+        if (req.getPassword() != null && !req.getPassword().isEmpty()) {
+            String hashPassword = passwordEncoder.encode(req.getPassword());
             user.setPassword(hashPassword);
+        }
         if (req.getRole() != null)
             user.setRole(req.getRole());
 
@@ -80,11 +91,20 @@ public class UserService {
             return ResponseEntity.notFound().build();
 
         userRepo.deleteById(id);
-        return ResponseEntity.ok("User deleted with id" + id);
+        return ResponseEntity.ok("User deleted with id  " + id);
     }
 
     // All users
     public List<User> getAllUsers() {
         return userRepo.findAll();
+    }
+
+    public UserDto toDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
     }
 }

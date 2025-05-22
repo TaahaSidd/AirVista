@@ -25,10 +25,10 @@ public class FlightService {
 
     public ResponseEntity<Flight> addFlight(FlightDto req) {
 
-        Airport origin = airportRepo.findById(req.getOriginId())
+        Airport origin = airportRepo.findByCode(req.getOriginCode())
                 .orElseThrow(() -> new RuntimeException("Origin airport not found"));
 
-        Airport destination = airportRepo.findById(req.getDestinationId())
+        Airport destination = airportRepo.findByCode(req.getDestinationCode())
                 .orElseThrow(() -> new RuntimeException("Destination airport not found"));
 
         Flight flight = new Flight();
@@ -36,9 +36,10 @@ public class FlightService {
         flight.setFlightNumber(req.getFlightNumber());
         flight.setOrigin(origin);
         flight.setDestination(destination);
-        flight.setDeptTime(req.getDepTime());
+        flight.setDeptTime(req.getDeptTime());
         flight.setArrTime(req.getArrTime());
         flight.setSeats(req.getSeats());
+        flight.setPrice(req.getPrice());
 
         return ResponseEntity.ok(flightRepo.save(flight));
     }
@@ -47,32 +48,35 @@ public class FlightService {
         return flightRepo.findById(id).orElse(null);
     }
 
-    public ResponseEntity<Flight> updateFlight(FlightDto req) {
-        Optional<Flight> flightOpt = flightRepo.findById(req.getId());
+    public ResponseEntity<Flight> updateFlight(Long id, FlightDto req) {
+        Optional<Flight> flightOpt = flightRepo.findById(id);
+        Flight flight = flightOpt.get();
 
         if (flightOpt.isEmpty())
             return ResponseEntity.notFound().build();
 
-        Airport origin = airportRepo.findById(req.getOriginId())
-                .orElseThrow(() -> new RuntimeException("Origin airport not found"));
-
-        Airport destination = airportRepo.findById(req.getDestinationId())
-                .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-
-        Flight flight = flightOpt.get();
-
+        if (req.getOriginCode() != null) {
+            Airport origin = airportRepo.findByCode(req.getOriginCode())
+                    .orElseThrow(
+                            () -> new RuntimeException("Origin airport not found for update:" + req.getOriginCode()));
+            flight.setOrigin(origin);
+        }
+        if (req.getDestinationCode() != null) {
+            Airport destination = airportRepo.findByCode(req.getDestinationCode())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Destination airport not found for update: " + req.getDestinationCode()));
+            flight.setDestination(destination);
+        }
         if (req.getFlightNumber() != null)
             flight.setFlightNumber(req.getFlightNumber());
-        if (origin != null)
-            flight.setOrigin(origin);
-        if (destination != null)
-            flight.setDestination(destination);
-        if (req.getDepTime() != null)
-            flight.setDeptTime(req.getDepTime());
+        if (req.getDeptTime() != null)
+            flight.setDeptTime(req.getDeptTime());
         if (req.getArrTime() != null)
             flight.setArrTime(req.getArrTime());
         if (req.getSeats() != null)
             flight.setSeats(req.getSeats());
+        if (req.getPrice() != 0.0)
+            flight.setPrice(req.getPrice());
 
         Flight saved = flightRepo.save(flight);
         return ResponseEntity.ok(saved);
@@ -100,11 +104,9 @@ public class FlightService {
         return FlightDto.builder()
                 .id(flight.getId())
                 .flightNumber(flight.getFlightNumber())
-                .originId(flight.getOrigin().getId())
                 .originCode(flight.getOrigin().getCode())
-                .destinationId(flight.getDestination().getId())
                 .destinationCode(flight.getDestination().getCode())
-                .depTime(flight.getDeptTime())
+                .deptTime(flight.getDeptTime())
                 .arrTime(flight.getArrTime())
                 .seats(flight.getSeats())
                 .price(flight.getPrice())

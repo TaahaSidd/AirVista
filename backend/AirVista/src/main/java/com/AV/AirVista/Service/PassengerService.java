@@ -31,8 +31,8 @@ public class PassengerService {
         return passengerRepo.findById(id);
     }
 
-    public ResponseEntity<Passenger> updatePassenger(PassengerDto req) {
-        Optional<Passenger> passengerOpt = passengerRepo.findById(req.getId());
+    public ResponseEntity<Passenger> updatePassenger(Long id, PassengerDto req) {
+        Optional<Passenger> passengerOpt = passengerRepo.findById(id);
 
         if (passengerOpt.isEmpty())
             return ResponseEntity.notFound().build();
@@ -57,10 +57,19 @@ public class PassengerService {
             return ResponseEntity.notFound().build();
 
         passengerRepo.deleteById(id);
-        return ResponseEntity.ok("Passenger deleted with id" + id);
+        return ResponseEntity.ok("Passenger deleted with id " + id);
     }
 
     public List<Passenger> getAllPassenger() {
         return passengerRepo.findAll();
+    }
+
+    public PassengerDto toDto(Passenger passenger) {
+        return PassengerDto.builder()
+                .id(passenger.getId())
+                .name(passenger.getName())
+                .email(passenger.getEmail())
+                .phone(passenger.getPhone())
+                .build();
     }
 }

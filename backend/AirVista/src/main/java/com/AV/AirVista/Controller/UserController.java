@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.AV.AirVista.Dto.UserDto;
@@ -21,7 +20,7 @@ import com.AV.AirVista.Service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/AirVista")
+@RequestMapping("AirVista/Users")
 public class UserController {
 
     @Autowired
@@ -32,20 +31,16 @@ public class UserController {
         return userService.addUser(req);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@Valid @RequestParam Long id) {
-        User user = userService.getUserById(id);
-        if (user == null)
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(user);
+    @GetMapping("/id/{id}")
+    public ResponseEntity<User> getUserById(@Valid @PathVariable Long id) {
+        return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("{email}")
-    public ResponseEntity<User> getUserByEmail(@Valid @RequestParam String email) {
-        User user = userService.getUerByEmail(email);
-
-        if (user == null)
-            return ResponseEntity.notFound().build();
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@Valid @PathVariable String email) {
+        User user = userService.getUserByEmail(email);
         return ResponseEntity.ok(user);
     }
 
@@ -55,8 +50,14 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUser() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDto>> getAllUser() {
+        List<User> users = userService.getAllUsers();
+
+        List<UserDto> userDtos = users.stream()
+                .map(userService::toDto)
+                .toList();
+
+        return ResponseEntity.ok(userDtos);
     }
 
     @DeleteMapping("/{id}")

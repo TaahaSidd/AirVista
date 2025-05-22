@@ -11,9 +11,13 @@ import com.AV.AirVista.Dto.BookingDto;
 import com.AV.AirVista.Model.Booking;
 import com.AV.AirVista.Model.Flight;
 import com.AV.AirVista.Model.Passenger;
+import com.AV.AirVista.Model.User;
 import com.AV.AirVista.Repository.BookingRepo;
 import com.AV.AirVista.Repository.FlightRepo;
 import com.AV.AirVista.Repository.PassengerRepo;
+import com.AV.AirVista.Repository.UserRepo;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BookingService {
@@ -27,27 +31,36 @@ public class BookingService {
     @Autowired
     private PassengerRepo passengerRepo;
 
+    @Autowired
+    private UserRepo userRepo;
+
+    @Transactional
     public ResponseEntity<Booking> addBooking(BookingDto req) {
 
-        Flight flight = flightRepo.findById(req.getId())
-                .orElseThrow(() -> new RuntimeException("Flight not found with id" + req.getId()));
+        Flight flight = flightRepo.findById(req.getFlightId())
+                .orElseThrow(() -> new RuntimeException("Flight not found with id" + req.getFlightId()));
 
-        Passenger passenger = passengerRepo.findById(req.getId())
-                .orElseThrow(() -> new RuntimeException("Passenger not Found with id" + req.getId()));
+        Passenger passenger = passengerRepo.findById(req.getPassengerId())
+                .orElseThrow(() -> new RuntimeException("Passenger not Found with id" + req.getPassengerId()));
+
+        User user = userRepo.findById(req.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id" + req.getUserId()));
 
         Booking booking = new Booking();
         booking.setFlight(flight);
         booking.setPassenger(passenger);
+        booking.setUser(user);
         booking.setBookingDate(req.getBookingDate());
         booking.setStatus(req.getStatus());
 
         return ResponseEntity.ok(bookingRepo.save(booking));
     }
 
-    public Booking getBookingById(Long id) {
-        return bookingRepo.findById(id).orElse(null);
+    public Optional<Booking> getBookingById(Long id) {
+        return bookingRepo.findById(id);
     }
 
+    @Transactional
     public ResponseEntity<Booking> cancelBooking(Long id) {
         Optional<Booking> bookingOpt = bookingRepo.findById(id);
 
@@ -59,11 +72,36 @@ public class BookingService {
         return ResponseEntity.ok(bookingRepo.save(booking));
     }
 
-    public ResponseEntity<List<Booking>> listBookingByUser(Long id) {
-        return ResponseEntity.ok(bookingRepo.findByUserId(id));
+    public List<Booking> listBookingsByUser(Long userid) {
+        return bookingRepo.findByUserId(userid);
     }
 
-    public ResponseEntity<List<Booking>> listFlightById(Long id) {
-        return ResponseEntity.ok(bookingRepo.findByFlightId(id));
+    public List<Booking> listBookingsByflightId(Long flightId) {
+        return bookingRepo.findByFlightId(flightId);
+    }
+
+    public BookingDto toDto(Booking booking) {
+        return BookingDto.builder()
+                .id(booking.getId())
+                .flightId(booking.getFlight().getId())
+                .passengerId(booking.getPassenger().getId())
+                .userId(booking.getUser().getId())
+                .bookingDate(booking.getBookingDate())
+                .status(booking.getStatus())
+                .build();
+    }
+
+    public List<Booking> getAllBookings() {
+        return bookingRepo.findAll();
+    }
+
+    public ResponseEntity<String> deleteBooking(Long id) {
+        Optional<Booking> bookingOpt = bookingRepo.findById(id);
+
+        if (bookingOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        bookingRepo.deleteById(id);
+        return ResponseEntity.ok("Booking deleted sucessfully with id: " + id);
     }
 }

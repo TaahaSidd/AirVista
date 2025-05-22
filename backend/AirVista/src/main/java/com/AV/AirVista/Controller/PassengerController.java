@@ -1,31 +1,26 @@
 package com.AV.AirVista.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.AV.AirVista.Dto.PassengerDto;
+import com.AV.AirVista.Model.Passenger;
 import com.AV.AirVista.Service.PassengerService;
 
 import jakarta.validation.Valid;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.AV.AirVista.Dto.PassengerDto;
-import com.AV.AirVista.Model.Passenger;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 @RestController
-@RequestMapping("/Passenger")
+@RequestMapping("/AirVista/Passenger")
 public class PassengerController {
 
     @Autowired
@@ -37,18 +32,24 @@ public class PassengerController {
     }
 
     @GetMapping("{id}")
-    public Optional<Passenger> getPassengerById(@Valid @RequestParam Long id) {
-        return passengerService.getPassengerById(id);
+    public ResponseEntity<Passenger> getPassengerById(@Valid @PathVariable Long id) {
+        return passengerService.getPassengerById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<Passenger> getAllPassenger() {
-        return passengerService.getAllPassenger();
+    public ResponseEntity<List<PassengerDto>> getAllPassenger() {
+        List<Passenger> passengers = passengerService.getAllPassenger();
+        List<PassengerDto> dtos = passengers.stream()
+                .map(passengerService::toDto)
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @PutMapping("update/{id}")
     public ResponseEntity<Passenger> updatePassenger(@Valid @PathVariable Long id, @RequestBody PassengerDto req) {
-        return passengerService.updatePassenger(req);
+        return passengerService.updatePassenger(id, req);
     }
 
     @DeleteMapping("{id}")

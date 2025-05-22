@@ -19,11 +19,11 @@ import lombok.Setter;
 @Builder
 public class FlightDto {
 
-    @NotNull(message = "Id is required")
+    // @NotNull(message = "Id is required")
     private Long id;
 
-    private Long originId;
-    private Long destinationId;
+    // private Long originId;
+    // private Long destinationId;
 
     @NotNull(message = "Flight number is required")
     private String flightNumber;
@@ -34,7 +34,7 @@ public class FlightDto {
     @NotBlank(message = " Destination is required")
     private String destinationCode;
     @NotNull(message = "Departure time is required")
-    private LocalDateTime depTime;
+    private LocalDateTime deptTime;
 
     @NotNull(message = "Arrival time is required")
     private LocalDateTime arrTime;

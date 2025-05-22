@@ -25,29 +25,38 @@ import com.AV.AirVista.Service.FlightService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/Flight")
+@RequestMapping("AirVista/Flight")
 public class FlightController {
 
     @Autowired
     private FlightService flightService;
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<Flight> addFlight(@Valid @RequestBody FlightDto req) {
         return flightService.addFlight(req);
     }
 
-    @GetMapping("{id}")
-    public Flight getFlightById(@RequestParam Long id) {
-        return flightService.getFlightById(id);
+    @GetMapping("/byId/{id}")
+    public ResponseEntity<Flight> getFlightById(@PathVariable Long id) {
+        Flight flight = flightService.getFlightById(id);
+        if (flight == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(flight);
     }
 
-    @PutMapping("/{id}")
+    @GetMapping
+    public List<Flight> getAllFlights() {
+        return flightService.getAllFlights();
+    }
+
+    @PutMapping("/update/{id}")
     public ResponseEntity<Flight> updateFlight(@Valid @PathVariable Long id, @RequestBody FlightDto req) {
-        return flightService.updateFlight(req);
+        return flightService.updateFlight(id, req);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteFlight(Long id) {
+    public ResponseEntity<String> deleteFlight(@PathVariable Long id) {
         return flightService.deleteFlight(id);
     }
 

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,14 +14,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class BookingDto {
     private Long id;
 
-    @NotBlank(message = "Flight reference is required")
-    private String flight;
+    @NotNull(message = "User id is required")
+    private Long userId;
 
-    @NotBlank(message = "Passenger name is required")
-    private String passenger;
+    @NotNull(message = "Flight id is required")
+    private Long flightId;
+
+    @NotNull(message = "Passenger id is required")
+    private Long passengerId;
 
     @NotNull(message = "Booking date is required")
     private LocalDate bookingDate;

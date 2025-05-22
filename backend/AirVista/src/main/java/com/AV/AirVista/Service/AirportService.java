@@ -1,7 +1,5 @@
 package com.AV.AirVista.Service;
 
-import com.AV.AirVista.Repository.AirportRepo;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.AirportDto;
 import com.AV.AirVista.Model.Airport;
+import com.AV.AirVista.Repository.AirportRepo;
 
 @Service
 public class AirportService {
@@ -54,9 +53,9 @@ public class AirportService {
             airport.setName(req.getName());
         if (req.getCode() != null)
             airport.setCode(req.getCode());
-        if (req.getCity() != null);
+        if (req.getCity() != null)
             airport.setCity(req.getCity());
-        if (req.getCountry() != null);
+        if (req.getCountry() != null)
             airport.setCountry(req.getCountry());
 
         Airport saved = airportRepo.save(airport);
@@ -71,7 +70,7 @@ public class AirportService {
             return ResponseEntity.notFound().build();
 
         airportRepo.deleteById(id);
-        return ResponseEntity.ok("Airport deleted successfully with id" + id);
+        return ResponseEntity.ok("Airport deleted successfully with id  " + id);
     }
 
     // Get all airports.

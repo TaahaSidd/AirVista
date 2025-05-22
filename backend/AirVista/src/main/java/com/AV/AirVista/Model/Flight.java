@@ -3,6 +3,8 @@ package com.AV.AirVista.Model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,17 +29,18 @@ public class Flight {
     private Long id;
 
     private String flightNumber;
-    // private String destination;
     private LocalDateTime deptTime;
     private LocalDateTime arrTime;
     private Integer seats;
     private double price;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "origin_id")
     private Airport origin;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "destination_id")
     private Airport destination;
 
