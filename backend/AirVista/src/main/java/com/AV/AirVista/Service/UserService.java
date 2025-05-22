@@ -11,26 +11,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.UserDto;
-import com.AV.AirVista.Model.User;
-import com.AV.AirVista.Repository.UserRepo;
+import com.AV.AirVista.Model.AppUser;
+import com.AV.AirVista.Repository.AppUserRepo;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepo userRepo;
+    private AppUserRepo userRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     // Add
-    public ResponseEntity<User> addUser(UserDto req) {
+    public ResponseEntity<AppUser> addUser(UserDto req) {
 
         if (userRepo.findByEmail(req.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        User user = new User();
+        AppUser user = new AppUser();
 
         String hashPassword = passwordEncoder.encode(req.getPassword());
 
@@ -43,25 +43,25 @@ public class UserService {
     }
 
     // Get user by id.
-    public Optional<User> getUserById(Long id) {
+    public Optional<AppUser> getUserById(Long id) {
         return userRepo.findById(id);
     }
 
     // Get user by email.
-    public User getUserByEmail(String email) {
+    public AppUser getUserByEmail(String email) {
         return userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not with email  " + email));
     }
 
     // Update
-    public ResponseEntity<User> updateUser(Long id, UserDto req) {
-        Optional<User> userOptional = userRepo.findById(id);
+    public ResponseEntity<AppUser> updateUser(Long id, UserDto req) {
+        Optional<AppUser> userOptional = userRepo.findById(id);
 
         if (userOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        User user = userOptional.get();
+        AppUser user = userOptional.get();
         if (req.getEmail() != null && !req.getEmail().equals(user.getEmail())) {
             if (userRepo.findByEmail(req.getEmail()).isPresent()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -78,14 +78,14 @@ public class UserService {
         if (req.getRole() != null)
             user.setRole(req.getRole());
 
-        User saved = userRepo.save(user);
+        AppUser saved = userRepo.save(user);
         return ResponseEntity.ok(saved);
 
     }
 
     // Delete
     public ResponseEntity<String> deleteUser(Long id) {
-        Optional<User> optUser = userRepo.findById(id);
+        Optional<AppUser> optUser = userRepo.findById(id);
 
         if (optUser.isEmpty())
             return ResponseEntity.notFound().build();
@@ -95,11 +95,11 @@ public class UserService {
     }
 
     // All users
-    public List<User> getAllUsers() {
+    public List<AppUser> getAllUsers() {
         return userRepo.findAll();
     }
 
-    public UserDto toDto(User user) {
+    public UserDto toDto(AppUser user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())

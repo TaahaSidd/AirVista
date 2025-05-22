@@ -8,14 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.BookingDto;
+import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Model.Booking;
 import com.AV.AirVista.Model.Flight;
 import com.AV.AirVista.Model.Passenger;
-import com.AV.AirVista.Model.User;
+import com.AV.AirVista.Repository.AppUserRepo;
 import com.AV.AirVista.Repository.BookingRepo;
 import com.AV.AirVista.Repository.FlightRepo;
 import com.AV.AirVista.Repository.PassengerRepo;
-import com.AV.AirVista.Repository.UserRepo;
 
 import jakarta.transaction.Transactional;
 
@@ -32,7 +32,7 @@ public class BookingService {
     private PassengerRepo passengerRepo;
 
     @Autowired
-    private UserRepo userRepo;
+    private AppUserRepo userRepo;
 
     @Transactional
     public ResponseEntity<Booking> addBooking(BookingDto req) {
@@ -43,7 +43,7 @@ public class BookingService {
         Passenger passenger = passengerRepo.findById(req.getPassengerId())
                 .orElseThrow(() -> new RuntimeException("Passenger not Found with id" + req.getPassengerId()));
 
-        User user = userRepo.findById(req.getUserId())
+        AppUser user = userRepo.findById(req.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id" + req.getUserId()));
 
         Booking booking = new Booking();

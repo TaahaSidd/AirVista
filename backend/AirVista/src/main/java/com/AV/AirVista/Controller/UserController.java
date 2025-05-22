@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.AV.AirVista.Dto.UserDto;
-import com.AV.AirVista.Model.User;
+import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Service.UserService;
 
 import jakarta.validation.Valid;
@@ -27,31 +27,31 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<User> addUser(@Valid @RequestBody UserDto req) {
+    public ResponseEntity<AppUser> addUser(@Valid @RequestBody UserDto req) {
         return userService.addUser(req);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<User> getUserById(@Valid @PathVariable Long id) {
+    public ResponseEntity<AppUser> getUserById(@Valid @PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@Valid @PathVariable String email) {
-        User user = userService.getUserByEmail(email);
+    public ResponseEntity<AppUser> getUserByEmail(@Valid @PathVariable String email) {
+        AppUser user = userService.getUserByEmail(email);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@Valid @PathVariable Long id, @RequestBody UserDto req) {
+    public ResponseEntity<AppUser> updateUser(@Valid @PathVariable Long id, @RequestBody UserDto req) {
         return userService.updateUser(id, req);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUser() {
-        List<User> users = userService.getAllUsers();
+        List<AppUser> users = userService.getAllUsers();
 
         List<UserDto> userDtos = users.stream()
                 .map(userService::toDto)
