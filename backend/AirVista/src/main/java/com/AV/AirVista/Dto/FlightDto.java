@@ -28,10 +28,10 @@ public class FlightDto {
     @NotNull(message = "Flight number is required")
     private String flightNumber;
 
-    @NotBlank(message = "Origin is required")
+    @NotBlank(message = "Origin Code is required")
     private String originCode;
 
-    @NotBlank(message = " Destination is required")
+    @NotBlank(message = " Destination Code is required")
     private String destinationCode;
     @NotNull(message = "Departure time is required")
     private LocalDateTime deptTime;

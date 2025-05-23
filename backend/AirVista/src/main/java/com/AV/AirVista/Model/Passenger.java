@@ -1,5 +1,7 @@
 package com.AV.AirVista.Model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,5 +28,5 @@ public class Passenger {
     private String phone;
 
     @OneToMany(mappedBy = "passenger")
-    private Booking booking;
+    private List<Booking> booking;
 }

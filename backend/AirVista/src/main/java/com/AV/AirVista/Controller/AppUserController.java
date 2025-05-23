@@ -13,21 +13,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.AV.AirVista.Dto.UserDto;
+import com.AV.AirVista.Dto.AppUserDto;
 import com.AV.AirVista.Model.AppUser;
-import com.AV.AirVista.Service.UserService;
+import com.AV.AirVista.Service.AppUserService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("AirVista/Users")
-public class UserController {
+public class AppUserController {
 
     @Autowired
-    private UserService userService;
+    private AppUserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<AppUser> addUser(@Valid @RequestBody UserDto req) {
+    public ResponseEntity<AppUser> addUser(@Valid @RequestBody AppUserDto req) {
         return userService.addUser(req);
     }
 
@@ -45,15 +45,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AppUser> updateUser(@Valid @PathVariable Long id, @RequestBody UserDto req) {
+    public ResponseEntity<AppUser> updateUser(@Valid @PathVariable Long id, @RequestBody AppUserDto req) {
         return userService.updateUser(id, req);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUser() {
+    public ResponseEntity<List<AppUserDto>> getAllUser() {
         List<AppUser> users = userService.getAllUsers();
 
-        List<UserDto> userDtos = users.stream()
+        List<AppUserDto> userDtos = users.stream()
                 .map(userService::toDto)
                 .toList();
 

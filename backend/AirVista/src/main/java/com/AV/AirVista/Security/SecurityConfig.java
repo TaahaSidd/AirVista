@@ -2,10 +2,12 @@ package com.AV.AirVista.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -32,7 +35,31 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                
+                        // Public authentication Endpoints.
                         .requestMatchers("/AirVista/v1/auth/**").permitAll()
+
+                        // Public GET request.
+                        .requestMatchers(HttpMethod.GET, "/AirVista/Flight/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/AirVist/Booking/***").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/AirVista/Airport/**").permitAll()
+
+                        // ADMIN acess only.
+                        // Flight.
+                        .requestMatchers(HttpMethod.POST, "/AirVista/Flight/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/AirVista/Flight/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/AirVista/Flight/**").hasAnyAuthority("ROLE_ADMIN")
+
+                        // Booking.
+                        .requestMatchers(HttpMethod.POST, "/AirVista/Booking/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/AirVista/Booking/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/AirVista/Booking/**").hasAnyAuthority("ROLE_ADMIN")
+
+                        // Airport.
+                        .requestMatchers(HttpMethod.POST, "/AirVista/Airport/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/AirVista/Airport/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/AirVista/Airport/**").hasAnyAuthority("ROLE_ADMIN")
+                        
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class AppUserDto {
 
     @NotNull(message = "Id is required")
     private Long id;

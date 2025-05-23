@@ -10,12 +10,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.AV.AirVista.Dto.UserDto;
+import com.AV.AirVista.Dto.AppUserDto;
 import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Repository.AppUserRepo;
 
 @Service
-public class UserService {
+public class AppUserService {
 
     @Autowired
     private AppUserRepo userRepo;
@@ -24,7 +24,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     // Add
-    public ResponseEntity<AppUser> addUser(UserDto req) {
+    public ResponseEntity<AppUser> addUser(AppUserDto req) {
 
         if (userRepo.findByEmail(req.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -54,7 +54,7 @@ public class UserService {
     }
 
     // Update
-    public ResponseEntity<AppUser> updateUser(Long id, UserDto req) {
+    public ResponseEntity<AppUser> updateUser(Long id, AppUserDto req) {
         Optional<AppUser> userOptional = userRepo.findById(id);
 
         if (userOptional.isEmpty()) {
@@ -99,8 +99,8 @@ public class UserService {
         return userRepo.findAll();
     }
 
-    public UserDto toDto(AppUser user) {
-        return UserDto.builder()
+    public AppUserDto toDto(AppUser user) {
+        return AppUserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
