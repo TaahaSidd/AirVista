@@ -34,7 +34,7 @@ public class AppUserService {
 
         String hashPassword = passwordEncoder.encode(req.getPassword());
 
-        user.setName(req.getName());
+        user.setFname(req.getFname());
         user.setEmail(req.getEmail());
         user.setPassword(hashPassword);
         user.setRole(req.getRole());
@@ -67,8 +67,10 @@ public class AppUserService {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
         }
-        if (req.getName() != null)
-            user.setName(req.getName());
+        if (req.getFname() != null)
+            user.setFname(req.getFname());
+        if (req.getLname() != null)
+            user.setLname(req.getLname());
         if (req.getEmail() != null)
             user.setEmail(req.getEmail());
         if (req.getPassword() != null && !req.getPassword().isEmpty()) {
@@ -102,7 +104,8 @@ public class AppUserService {
     public AppUserDto toDto(AppUser user) {
         return AppUserDto.builder()
                 .id(user.getId())
-                .name(user.getName())
+                .fname(user.getFname())
+                .lname(user.getLname())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .build();

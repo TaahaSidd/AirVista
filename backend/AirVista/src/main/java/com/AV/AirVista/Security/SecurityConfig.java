@@ -35,16 +35,27 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                
+
+                        // Logout.
+                        .requestMatchers(HttpMethod.POST, "/AirVista/v1/auth/logout").authenticated()
+
                         // Public authentication Endpoints.
                         .requestMatchers("/AirVista/v1/auth/**").permitAll()
+
+                        // Specific GET requests.
+                        // Require Valid authenticated user.
+                        .requestMatchers(HttpMethod.GET, "AirVista/Booking/my-bookings").authenticated()
+                        .requestMatchers(HttpMethod.GET, "AirVista/Booking/{id}/my-booking").authenticated()
 
                         // Public GET request.
                         .requestMatchers(HttpMethod.GET, "/AirVista/Flight/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/AirVist/Booking/***").permitAll()
                         .requestMatchers(HttpMethod.GET, "/AirVista/Airport/**").permitAll()
 
-                        // ADMIN acess only.
+                        .requestMatchers(HttpMethod.POST, "/AirVista/Booking")
+                        .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+
+                        // ADMIN access only.
                         // Flight.
                         .requestMatchers(HttpMethod.POST, "/AirVista/Flight/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/AirVista/Flight/**").hasAnyAuthority("ROLE_ADMIN")
@@ -59,7 +70,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/AirVista/Airport/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/AirVista/Airport/**").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/AirVista/Airport/**").hasAnyAuthority("ROLE_ADMIN")
-                        
+
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

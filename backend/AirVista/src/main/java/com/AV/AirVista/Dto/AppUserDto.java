@@ -20,9 +20,11 @@ public class AppUserDto {
     @NotNull(message = "Id is required")
     private Long id;
 
-    @NotBlank(message = "Name is required")
-    private String name;
+    @NotBlank(message = "First name is required")
+    private String fname;
 
+    @NotBlank(message = "Last name is required")
+    private String lname;
     @Email
     @NotBlank(message = "Email is required")
     private String email;

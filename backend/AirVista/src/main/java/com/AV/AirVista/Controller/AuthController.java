@@ -1,66 +1,39 @@
 package com.AV.AirVista.Controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.AV.AirVista.Repository.UserRepository;
-import com.AV.AirVista.Security.JwtUtil;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.AV.AirVista.Dto.AuthenticationRequest;
 import com.AV.AirVista.Dto.AuthenticationResponse;
+import com.AV.AirVista.Dto.RefreshTokenRequest;
 import com.AV.AirVista.Dto.RegisterRequest;
-import com.AV.AirVista.Model.AppUser;
+import com.AV.AirVista.Service.AuthService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/AirVista/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        var user = AppUser.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
-                .build();
-
-        userRepository.save(user);
-
-        // Generate a JWT token for new user.
-        UserDetails userdetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String jwtToken = jwtUtil.generateToken(userdetails);
-
-        // Returning JWT in response.
-        return ResponseEntity.ok(AuthenticationResponse.builder().token(jwtToken).build());
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest req) {
+        return ResponseEntity.ok(authService.register(req));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()));
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest req) {
+        return ResponseEntity.ok(authService.authenticate(req));
+    }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String jwtToken = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(AuthenticationResponse.builder().token(jwtToken).build());
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest req) {
+        return ResponseEntity.ok(authService.refreshToken(req));
     }
 
 }
