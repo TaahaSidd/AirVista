@@ -7,21 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.AppUserDto;
 import com.AV.AirVista.Model.AppUser;
-import com.AV.AirVista.Repository.AppUserRepo;
+import com.AV.AirVista.Model.UserProfileRequest;
+import com.AV.AirVista.Repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AppUserService {
 
     @Autowired
-    private AppUserRepo userRepo;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserRepository userRepo;
 
     // Add
     public ResponseEntity<AppUser> addUser(AppUserDto req) {
@@ -32,19 +31,19 @@ public class AppUserService {
 
         AppUser user = new AppUser();
 
-        String hashPassword = passwordEncoder.encode(req.getPassword());
-
         user.setFname(req.getFname());
+        user.setLname(req.getLname());
         user.setEmail(req.getEmail());
-        user.setPassword(hashPassword);
+        user.setPassword(req.getPassword());
         user.setRole(req.getRole());
 
         return ResponseEntity.ok(userRepo.save(user));
     }
 
     // Get user by id.
-    public Optional<AppUser> getUserById(Long id) {
-        return userRepo.findById(id);
+    public AppUser getUserById(Long id) {
+        return userRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     // Get user by email.
@@ -54,35 +53,24 @@ public class AppUserService {
     }
 
     // Update
-    public ResponseEntity<AppUser> updateUser(Long id, AppUserDto req) {
-        Optional<AppUser> userOptional = userRepo.findById(id);
+    @Transactional
+    public AppUser updateUser(Long id, UserProfileRequest req) {
+        AppUser user = userRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        if (req.getFirstname() != null && !req.getFirstname().isBlank())
+            user.setFname(req.getFirstname());
+        if (req.getLastname() != null && !req.getLastname().isBlank())
+            user.setLname(req.getLastname());
 
-        AppUser user = userOptional.get();
-        if (req.getEmail() != null && !req.getEmail().equals(user.getEmail())) {
-            if (userRepo.findByEmail(req.getEmail()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }
-        }
-        if (req.getFname() != null)
-            user.setFname(req.getFname());
-        if (req.getLname() != null)
-            user.setLname(req.getLname());
-        if (req.getEmail() != null)
-            user.setEmail(req.getEmail());
-        if (req.getPassword() != null && !req.getPassword().isEmpty()) {
-            String hashPassword = passwordEncoder.encode(req.getPassword());
-            user.setPassword(hashPassword);
-        }
-        if (req.getRole() != null)
-            user.setRole(req.getRole());
+        if (req.getEmail() != null && !req.getEmail().isBlank())
+            if (user.getEmail().equalsIgnoreCase(req.getEmail()))
+                if (userRepo.findByEmail(req.getEmail()).isPresent())
+                    throw new IllegalArgumentException("Email " + req.getEmail() + " is already taken by another user");
 
-        AppUser saved = userRepo.save(user);
-        return ResponseEntity.ok(saved);
+        user.setEmail(req.getEmail());
 
+        return userRepo.save(user);
     }
 
     // Delete

@@ -1,4 +1,4 @@
-package com.AV.AirVista.Dto;
+package com.AV.AirVista.Model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class UserProfileResponse {
 
-    private String fname;
-    private String lname;
+    private Long id;
+    private String firstname;
+    private String lastname;
     private String email;
-    private String password;
-    private String role;
 
 }

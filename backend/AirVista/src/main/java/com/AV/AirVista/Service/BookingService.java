@@ -12,10 +12,10 @@ import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Model.Booking;
 import com.AV.AirVista.Model.Flight;
 import com.AV.AirVista.Model.Passenger;
-import com.AV.AirVista.Repository.AppUserRepo;
 import com.AV.AirVista.Repository.BookingRepo;
 import com.AV.AirVista.Repository.FlightRepo;
 import com.AV.AirVista.Repository.PassengerRepo;
+import com.AV.AirVista.Repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -32,7 +32,7 @@ public class BookingService {
     private PassengerRepo passengerRepo;
 
     @Autowired
-    private AppUserRepo userRepo;
+    private UserRepository userRepo;
 
     @Transactional
     public ResponseEntity<Booking> addBooking(BookingDto req) {

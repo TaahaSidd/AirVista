@@ -29,6 +29,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Transactional
     public AuthenticationResponse register(RegisterRequest req) {
@@ -36,14 +37,15 @@ public class AuthService {
             throw new IllegalArgumentException("User with this email already exists.");
 
         var user = AppUser.builder()
-                .fname(req.getName())
-                .lname(req.getName())
+                .fname(req.getFname())
+                .lname(req.getLname())
                 .email(req.getEmail())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .role(req.getRole())
                 .build();
 
-        userRepo.save(user);
+        var savedUser = userRepo.save(user);
+        emailService.sendWelcomeEmail(savedUser.getEmail(), savedUser.getFname());
 
         var jwtToken = jwtUtil.generateToken(user);
         return AuthenticationResponse.builder().accessToken(jwtToken).build();

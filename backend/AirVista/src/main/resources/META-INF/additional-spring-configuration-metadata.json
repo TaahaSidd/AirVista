@@ -13,5 +13,10 @@
     "name": "application.security.jwt.refresh-token.expiration",
     "type": "java.lang.String",
     "description": "A description for 'application.security.jwt.refresh-token.expiration'"
+  },
+  {
+    "name": "spring.mail.test.connection",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mail.test.connection'"
   }
 ]}
