@@ -1,4 +1,4 @@
-package com.AV.AirVista.Dto;
+package com.AV.AirVista.Dto.Request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

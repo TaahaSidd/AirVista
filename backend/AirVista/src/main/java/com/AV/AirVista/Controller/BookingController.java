@@ -3,43 +3,40 @@ package com.AV.AirVista.Controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.AV.AirVista.Dto.BookingDto;
-import com.AV.AirVista.Model.Booking;
-import com.AV.AirVista.Service.BookingService;
-
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
+import com.AV.AirVista.Dto.Response.PaymentResponse;
 import com.AV.AirVista.Model.AppUser;
+import com.AV.AirVista.Model.Booking;
 import com.AV.AirVista.Repository.BookingRepo;
 import com.AV.AirVista.Repository.UserRepository;
+import com.AV.AirVista.Service.BookingService;
+import com.razorpay.RazorpayException;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("AirVista/Booking")
+@RequiredArgsConstructor
 public class BookingController {
 
-    @Autowired
-    private BookingService bookingService;
+    private final BookingService bookingService;
+    private final BookingRepo bookingRepo;
+    private final UserRepository userRepo;
 
-    @Autowired
-    private BookingRepo bookingRepo;
-
-    @Autowired
-    private UserRepository userRepo;
-
-    // POST method for autnenticaed users.
+    // POST method for authenticated users.
     @PostMapping("/create")
     public ResponseEntity<Booking> createBooking(@RequestBody Booking booking, Authentication authentication) {
         String email = authentication.getName();
@@ -81,7 +78,7 @@ public class BookingController {
     @GetMapping("/flight/{flightId}/bookings")
     public ResponseEntity<List<BookingDto>> getFlightById(@PathVariable Long flightId) {
 
-        List<Booking> bookings = bookingService.listBookingsByflightId(flightId);
+        List<Booking> bookings = bookingService.listBookingsByFlightId(flightId);
         List<BookingDto> dtos = bookings.stream()
                 .map(bookingService::toDto)
                 .toList();
@@ -144,6 +141,26 @@ public class BookingController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(optBooking.get(), HttpStatus.OK);
+    }
+
+    @PostMapping("/initiate")
+    public ResponseEntity<?> initiateBookingAndPayment(@RequestBody BookingDto requestDto) {
+        try {
+            PaymentResponse response = bookingService.addBookingAndInitiatePayment(requestDto);
+            return ResponseEntity.ok(response);
+        } catch (RazorpayException e) {
+            System.err.println("Error during Razorpay order creation in booking: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to initiate payment: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.err.println("Booking initiation error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("An unexpected error occurred during booking initiation: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred during booking initiation.");
+        }
     }
 
 }

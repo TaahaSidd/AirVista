@@ -1,21 +1,21 @@
 package com.AV.AirVista.Controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.AV.AirVista.Service.PaymentService;
-
-import lombok.RequiredArgsConstructor;
-
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.AV.AirVista.Dto.PaymentRequestDto;
-import com.AV.AirVista.Dto.PaymentResponse;
+import com.AV.AirVista.Dto.Request.PaymentRequestDto;
+import com.AV.AirVista.Dto.Response.PaymentResponse;
+import com.AV.AirVista.Service.BookingService;
+import com.AV.AirVista.Service.PaymentService;
 import com.razorpay.RazorpayException;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("AirVista/payment")
@@ -23,6 +23,7 @@ import com.razorpay.RazorpayException;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final BookingService bookingService;
 
     @PostMapping("/create-order")
     public ResponseEntity<?> createRazorpayOrder(@RequestBody PaymentRequestDto requestDto) {
@@ -30,7 +31,6 @@ public class PaymentController {
             PaymentResponse response = paymentService.createOrder(requestDto);
             return ResponseEntity.ok(response);
         } catch (RazorpayException e) {
-            // Log the exception for debugging
             System.err.println("Error creating Razorpay order: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to create Razorpay order: " + e.getMessage());
@@ -52,21 +52,14 @@ public class PaymentController {
         }
 
         try {
-            boolean isValidSignature = paymentService.verifyPaymentSignature(razorpayOrderId, razorpayPaymentId,
-                    razorpaySignature);
-
-            if (isValidSignature) {
-                System.out.println("Payment verification successful for Order ID: " + razorpayOrderId);
-                return ResponseEntity.ok("Payment verified successfully!");
-            } else {
-                System.out.println("Payment verification failed: Invalid signature for Order ID: " + razorpayOrderId);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Payment verification failed: Invalid signature.");
-            }
-        } catch (RazorpayException e) {
-            System.err.println("Error during payment signature verification: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error verifying payment: " + e.getMessage());
+            // Call bookingService to confirm the booking, which internally verifies the
+            // signature
+            bookingService.confirmBooking(razorpayOrderId, razorpayPaymentId, razorpaySignature);
+            return ResponseEntity.ok("Payment verified and booking confirmed successfully!");
+        } catch (RuntimeException e) {
+            // Catch exceptions thrown by bookingService.confirmBooking
+            System.err.println("Payment verification/booking confirmation failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             System.err.println("An unexpected error occurred during payment verification: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

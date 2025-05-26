@@ -1,4 +1,4 @@
-package com.AV.AirVista.Dto;
+package com.AV.AirVista.Dto.Request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
-    
-    private String accessToken;
-    private String refreshToken;
+public class AuthenticationRequest {
+    private String email;
+    private String password;
 }

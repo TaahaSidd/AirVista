@@ -1,24 +1,22 @@
 package com.AV.AirVista.Controller;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.AV.AirVista.Dto.FlightDto;
+import com.AV.AirVista.Dto.FlightSearchCriteriaDto;
 import com.AV.AirVista.Model.Flight;
 import com.AV.AirVista.Service.FlightService;
 
@@ -37,8 +35,8 @@ public class FlightController {
     }
 
     @GetMapping("/byId/{id}")
-    public ResponseEntity<Flight> getFlightById(@PathVariable Long id) {
-        Flight flight = flightService.getFlightById(id);
+    public ResponseEntity<Optional<Flight>> getFlightById(@PathVariable Long id) {
+        Optional<Flight> flight = flightService.getFlightById(id);
         if (flight == null) {
             return ResponseEntity.notFound().build();
         }
@@ -46,8 +44,12 @@ public class FlightController {
     }
 
     @GetMapping
-    public List<Flight> getAllFlights() {
-        return flightService.getAllFlights();
+    public ResponseEntity<List<Flight>> getAllFlights() {
+        List<Flight> flights = flightService.getAllFlights();
+        if (flights.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(flights);
     }
 
     @PutMapping("/update/{id}")
@@ -61,15 +63,18 @@ public class FlightController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<FlightDto>> searchFlight(@RequestParam String origin, @RequestParam String destination,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<List<FlightDto>> searchFlight(
+            @ModelAttribute FlightSearchCriteriaDto criteriaDto) {
 
-        List<Flight> flights = Optional.ofNullable(flightService.searchFlights(origin, destination, date))
-                .orElse(Collections.emptyList());
+        List<Flight> flights = flightService.searchFlights(criteriaDto);
 
         List<FlightDto> dtos = flights.stream()
                 .map(flightService::toDto)
                 .toList();
+
+        if (dtos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(dtos);
     }
 

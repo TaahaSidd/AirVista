@@ -1,6 +1,8 @@
 package com.AV.AirVista.Model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -9,6 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +33,12 @@ public class Booking {
     private LocalDate bookingDate;
     private String status;
 
+    private BigDecimal totalPrice;
+
+    private String razorPayOrderId;
+    private String razorPaymentId;
+    private String razorPaymentSignature;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser user;
@@ -42,4 +52,9 @@ public class Booking {
     @JsonIgnore
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
+
+    @ManyToMany
+    @JoinTable(name = "booking_seats",
+            joinColumns = @JoinColumn(name = "booking_id"), inverseJoinColumns = @JoinColumn(name = "seat_id"))
+    private List<Seat> assignedSeats;
 }

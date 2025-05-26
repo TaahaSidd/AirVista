@@ -6,8 +6,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.AV.AirVista.Dto.PaymentRequestDto;
-import com.AV.AirVista.Dto.PaymentResponse;
+import com.AV.AirVista.Dto.Request.PaymentRequestDto;
+import com.AV.AirVista.Dto.Response.PaymentResponse;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;

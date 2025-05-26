@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.AV.AirVista.Dto.AuthenticationRequest;
-import com.AV.AirVista.Dto.AuthenticationResponse;
-import com.AV.AirVista.Dto.RefreshTokenRequest;
-import com.AV.AirVista.Dto.RegisterRequest;
+import com.AV.AirVista.Dto.Request.AuthenticationRequest;
+import com.AV.AirVista.Dto.Request.RefreshTokenRequest;
+import com.AV.AirVista.Dto.Request.RegisterRequest;
+import com.AV.AirVista.Dto.Response.AuthenticationResponse;
 import com.AV.AirVista.Service.AuthService;
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.AV.AirVista.Dto;
+package com.AV.AirVista.Dto.Request;
 
 import java.math.BigDecimal;
 

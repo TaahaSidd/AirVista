@@ -17,4 +17,6 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
     Optional<Booking> findByIdAndUser(Long id, AppUser user);
 
     List<Booking> findByFlightId(Long id);
+
+    Optional<Booking> findByRazorPayOrderId(String razorPayOrderId);
 }

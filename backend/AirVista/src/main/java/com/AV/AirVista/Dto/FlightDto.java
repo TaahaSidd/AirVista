@@ -1,5 +1,6 @@
 package com.AV.AirVista.Dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -22,9 +23,6 @@ public class FlightDto {
     // @NotNull(message = "Id is required")
     private Long id;
 
-    // private Long originId;
-    // private Long destinationId;
-
     @NotNull(message = "Flight number is required")
     private String flightNumber;
 
@@ -43,5 +41,5 @@ public class FlightDto {
     private Integer seats;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Price must be zero or positive")
-    private double price;
+    private BigDecimal price;
 }

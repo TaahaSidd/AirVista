@@ -1,6 +1,7 @@
 package com.AV.AirVista.Dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,4 +33,7 @@ public class BookingDto {
 
     @NotBlank(message = "Booking status is required")
     private String status;
+
+    private List<String> selectedSeatNumbers;
+    private int numberOfPassengers;
 }
