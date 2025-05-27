@@ -6,19 +6,27 @@ import java.time.LocalTime;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.AV.AirVista.Model.Flight;
+import com.AV.AirVista.Model.Airport;
 import com.AV.AirVista.Model.Enums.CabinClass;
+import com.AV.AirVista.Model.Flight;
 
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Join;
 
 public class FlightSpecification {
     // Specification for filtering by origin city
     public static Specification<Flight> hasOriginCity(String originCity) {
         return (root, query, criteriaBuilder) -> {
             if (originCity == null || originCity.isEmpty()) {
-                return null; // No filtering if criteria is null/empty
+                return null;
             }
-            return criteriaBuilder.equal(root.get("origin").get("city"), originCity);
+            // Join to the 'origin' Airport entity (if 'origin' is a @ManyToOne
+            // relationship)
+            Join<Flight, Airport> originJoin = root.join("origin");
+            // Use LOWER() for case-insensitivity and LIKE for partial match
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(originJoin.get("city")), // Convert stored city name to lowercase
+                    "%" + originCity.toLowerCase() + "%" // Convert search query to lowercase and add wildcards
+            );
         };
     }
 
@@ -28,7 +36,14 @@ public class FlightSpecification {
             if (destinationCity == null || destinationCity.isEmpty()) {
                 return null;
             }
-            return criteriaBuilder.equal(root.get("destination").get("city"), destinationCity);
+            // Join to the 'destination' Airport entity (if 'destination' is a @ManyToOne
+            // relationship)
+            Join<Flight, Airport> destinationJoin = root.join("destination");
+            // Use LOWER() for case-insensitivity and LIKE for partial match
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(destinationJoin.get("city")), // Convert stored city name to lowercase
+                    "%" + destinationCity.toLowerCase() + "%" // Convert search query to lowercase and add wildcards
+            );
         };
     }
 
@@ -115,12 +130,8 @@ public class FlightSpecification {
             if (minTime == null) {
                 return null;
             }
-            // Extracting time components for comparison
-            Predicate hourPredicate = criteriaBuilder.greaterThanOrEqualTo(
-                    criteriaBuilder.function("HOUR", Integer.class, root.get("deptTime")), minTime.getHour());
-            Predicate minutePredicate = criteriaBuilder.greaterThanOrEqualTo(
-                    criteriaBuilder.function("MINUTE", Integer.class, root.get("deptTime")), minTime.getMinute());
-            return criteriaBuilder.and(hourPredicate, minutePredicate);
+            return criteriaBuilder.greaterThanOrEqualTo(
+                    criteriaBuilder.function("TIME", LocalTime.class, root.get("deptTime")), minTime);
         };
     }
 
@@ -130,12 +141,8 @@ public class FlightSpecification {
             if (maxTime == null) {
                 return null;
             }
-            // Extracting time components for comparison
-            Predicate hourPredicate = criteriaBuilder.lessThanOrEqualTo(
-                    criteriaBuilder.function("HOUR", Integer.class, root.get("deptTime")), maxTime.getHour());
-            Predicate minutePredicate = criteriaBuilder.lessThanOrEqualTo(
-                    criteriaBuilder.function("MINUTE", Integer.class, root.get("deptTime")), maxTime.getMinute());
-            return criteriaBuilder.and(hourPredicate, minutePredicate);
+            return criteriaBuilder.lessThanOrEqualTo(
+                    criteriaBuilder.function("TIME", LocalTime.class, root.get("deptTime")), maxTime);
         };
     }
 

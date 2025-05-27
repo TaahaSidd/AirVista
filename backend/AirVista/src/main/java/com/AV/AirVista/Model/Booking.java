@@ -4,9 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.AV.AirVista.Model.Enums.BookingStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +37,9 @@ public class Booking {
     private Long id;
 
     private LocalDate bookingDate;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
     private BigDecimal totalPrice;
 
@@ -43,18 +51,15 @@ public class Booking {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "passenger_id")
-    private Passenger passenger;
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Passenger> passengers;
 
-    @ManyToMany
-    @JoinTable(name = "booking_seats",
-            joinColumns = @JoinColumn(name = "booking_id"), inverseJoinColumns = @JoinColumn(name = "seat_id"))
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "booking_seats", joinColumns = @JoinColumn(name = "booking_id"), inverseJoinColumns = @JoinColumn(name = "seat_id"))
     private List<Seat> assignedSeats;
 }

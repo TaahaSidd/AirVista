@@ -14,12 +14,15 @@ public class AirportDto {
 
     private Long id;
 
-    @NotBlank(message = "Airport name cannot be null")
+    @NotBlank(message = "Airport name cannot be blank")
     private String name;
 
-    @NotBlank(message = "Airport code cannot be null")
+    @NotBlank(message = "Airport code cannot be blank")
     private String code;
-    
+
+    @NotBlank(message = "City cannot be blank")
     private String city;
+
+    @NotBlank(message = "Country cannot be blank")
     private String country;
 }

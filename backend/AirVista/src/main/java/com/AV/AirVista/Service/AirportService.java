@@ -3,51 +3,43 @@ package com.AV.AirVista.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.AirportDto;
+import com.AV.AirVista.Exception.ResourceNotFoundException;
 import com.AV.AirVista.Model.Airport;
 import com.AV.AirVista.Repository.AirportRepo;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AirportService {
 
-    @Autowired
-    private AirportRepo airportRepo;
+    private final AirportRepo airportRepo;
 
-    // Add.
-    public ResponseEntity<Airport> addAirport(AirportDto req) {
+    public Airport addAirport(AirportDto req) {
+
         Airport airport = new Airport();
-
         airport.setName(req.getName());
         airport.setCode(req.getCode());
         airport.setCity(req.getCity());
         airport.setCountry(req.getCountry());
-
-        return ResponseEntity.ok(airportRepo.save(airport));
+        return airportRepo.save(airport);
     }
 
-    // Get by id.
-    public Airport getAirportById(Long id) {
-        return airportRepo.findById(id).orElse(null);
+    public Optional<Airport> getAirportById(Long id) {
+        return airportRepo.findById(id);
     }
 
-    // Get by code.
     public Optional<Airport> getAirportByCode(String code) {
         return airportRepo.findByCode(code);
     }
 
-    // Update.
-    public ResponseEntity<Airport> updateAirport(AirportDto req, Long id) {
-        Optional<Airport> airportOpt = airportRepo.findById(id);
-
-        if (airportOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Airport airport = airportOpt.get();
+    // Update Airport
+    public Airport updateAirport(AirportDto req, Long id) {
+        Airport airport = airportRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Airport not found with ID: " + id));
 
         if (req.getName() != null)
             airport.setName(req.getName());
@@ -58,24 +50,19 @@ public class AirportService {
         if (req.getCountry() != null)
             airport.setCountry(req.getCountry());
 
-        Airport saved = airportRepo.save(airport);
-        return ResponseEntity.ok(saved);
+        return airportRepo.save(airport);
     }
 
-    // Delete.
-    public ResponseEntity<String> deleteAirport(Long id) {
-        Optional<Airport> airportOpt = airportRepo.findById(id);
-
-        if (airportOpt.isEmpty())
-            return ResponseEntity.notFound().build();
-
+    // Delete Airport
+    public void deleteAirport(Long id) {
+        if (!airportRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Airport not found with ID: " + id);
+        }
         airportRepo.deleteById(id);
-        return ResponseEntity.ok("Airport deleted successfully with id  " + id);
     }
 
-    // Get all airports.
+    // Get all airports
     public List<Airport> getAllAirports() {
         return airportRepo.findAll();
     }
-
 }

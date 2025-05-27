@@ -62,4 +62,17 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
         return new ResponseEntity<>(error, status);
     }
+
+    // Handler for ResourceNotFoundException (404 Not Found)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
+            ResourceNotFoundException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND; // 404
+        ErrorResponse error = new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(), // "Not Found"
+                ex.getMessage(), // Use the specific message from the exception
+                Instant.now().toEpochMilli());
+        return new ResponseEntity<>(error, status);
+    }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.Request.AuthenticationRequest;
 import com.AV.AirVista.Dto.Request.RefreshTokenRequest;
-import com.AV.AirVista.Dto.Request.RegisterRequest;
+import com.AV.AirVista.Dto.Request.UserRegistrationRequestDto;
 import com.AV.AirVista.Dto.Response.AuthenticationResponse;
 import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Model.RefreshToken;
@@ -32,7 +32,7 @@ public class AuthService {
     private final EmailService emailService;
 
     @Transactional
-    public AuthenticationResponse register(RegisterRequest req) {
+    public AuthenticationResponse register(UserRegistrationRequestDto req) {
         if (userRepo.findByEmail(req.getEmail()).isPresent())
             throw new IllegalArgumentException("User with this email already exists.");
 
@@ -41,7 +41,7 @@ public class AuthService {
                 .lname(req.getLname())
                 .email(req.getEmail())
                 .password(passwordEncoder.encode(req.getPassword()))
-                .role(req.getRole())
+                .role("USER")
                 .build();
 
         var savedUser = userRepo.save(user);

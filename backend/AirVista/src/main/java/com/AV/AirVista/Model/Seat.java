@@ -38,7 +38,7 @@ public class Seat {
     @Enumerated
     private SeatStatus status;
 
-    private BigDecimal pricePremium; // Additional cost for this seat.
+    private BigDecimal pricePremium;
 
     private boolean isWindow;
     private boolean isAisle;

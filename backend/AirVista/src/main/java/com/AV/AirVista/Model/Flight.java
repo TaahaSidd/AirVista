@@ -41,7 +41,6 @@ public class Flight {
     private LocalDateTime arrTime;
     private Integer seats;
     private BigDecimal price;
-
     private Integer stops;
     private String airline;
 
@@ -66,21 +65,20 @@ public class Flight {
     @JsonIgnore
     private Set<Seat> seatsLayout;
 
-    // For Live Tracking of flights.
-    private String flightStatus; // e.g., "scheduled", "active", "landed", "cancelled", "delayed"
-    private String statusMessage; // A more detailed message if available
+    private String flightStatus;
+    private String statusMessage;
 
     // Departure details
-    private LocalDateTime actualDeptTime; // Actual departure time (if different from scheduled)
+    private LocalDateTime actualDeptTime;
     private String depTerminal;
     private String depGate;
-    private Integer depDelay; // Delay in minutes
+    private Integer depDelay;
 
     // Arrival details
-    private LocalDateTime actualArrTime; // Actual arrival time (if different from scheduled)
+    private LocalDateTime actualArrTime;
     private String arrTerminal;
     private String arrGate;
-    private Integer arrDelay; // Delay in minutes
+    private Integer arrDelay;
 
     @Transient
     public int getAvailableSeats() {
@@ -88,7 +86,7 @@ public class Flight {
             return seats;
         }
         long bookedSeats = booking.stream()
-                .filter(b -> "CONFIRMED".equals(b.getStatus())) // Or "PENDING" depending on your logic
+                .filter(b -> "CONFIRMED".equals(b.getStatus()))
                 .count();
         return seats - (int) bookedSeats;
     }
