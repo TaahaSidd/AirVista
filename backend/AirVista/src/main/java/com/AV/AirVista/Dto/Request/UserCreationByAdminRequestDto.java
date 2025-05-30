@@ -8,13 +8,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//For new user signups.
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRegistrationRequestDto {
+public class UserCreationByAdminRequestDto {
+
     @NotBlank(message = "First name is required")
     private String fname;
 
@@ -27,6 +26,5 @@ public class UserRegistrationRequestDto {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
-
     private String password;
 }

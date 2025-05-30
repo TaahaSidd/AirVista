@@ -47,8 +47,6 @@ public class PaymentService {
 
     public boolean verifyPaymentSignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature)
             throws RazorpayException {
-        // This utility method from Razorpay SDK simplifies signature verification
-        // It uses your Key Secret to hash and compare
         return com.razorpay.Utils.verifySignature(razorpayOrderId + "|" + razorpayPaymentId, razorpaySignature,
                 razorpayKeySecret);
     }

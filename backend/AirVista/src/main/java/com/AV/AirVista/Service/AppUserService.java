@@ -3,24 +3,27 @@ package com.AV.AirVista.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.AppUserDto;
+import com.AV.AirVista.Dto.Request.UserCreationByAdminRequestDto;
 import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Model.UserProfileRequest;
 import com.AV.AirVista.Repository.UserRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AppUserService {
 
-    @Autowired
-    private UserRepository userRepo;
+    private final UserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     // Add
     public ResponseEntity<AppUser> addUser(AppUserDto req) {
@@ -97,5 +100,23 @@ public class AppUserService {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .build();
+    }
+
+    @Transactional
+    public AppUser createAdminUser(UserCreationByAdminRequestDto req) {
+        Optional<AppUser> existingUser = userRepo.findByEmail(req.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("User with this email already exists.");
+        }
+
+        var user = AppUser.builder()
+                .fname(req.getFname())
+                .lname(req.getLname())
+                .email(req.getEmail())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .role("ADMIN")
+                .build();
+
+        return userRepo.save(user);
     }
 }

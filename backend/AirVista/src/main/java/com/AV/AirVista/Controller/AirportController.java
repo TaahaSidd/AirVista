@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class AirportController {
 
     // Add Airport
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Airport> addAirports(@Valid @RequestBody AirportDto req) {
         Airport savedAirport = airportService.addAirport(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedAirport);
@@ -60,6 +62,7 @@ public class AirportController {
 
     // Update Airport
     @PutMapping("update/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Airport> updateAirport(@PathVariable Long id, @Valid @RequestBody AirportDto req) {
         Airport updatedAirport = airportService.updateAirport(req, id);
         return ResponseEntity.ok(updatedAirport);
@@ -67,6 +70,7 @@ public class AirportController {
 
     // Delete Airport
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteAirport(@PathVariable Long id) {
 
         airportService.deleteAirport(id);

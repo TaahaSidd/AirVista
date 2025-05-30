@@ -3,6 +3,7 @@ package com.AV.AirVista.Controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,6 +31,7 @@ public class FlightController {
     private final FlightService flightService;
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FlightDto> addFlight(@Valid @RequestBody FlightDto req) {
         Flight addedFlight = flightService.addFlight(req);
         return ResponseEntity.ok(flightService.toDto(addedFlight));
@@ -42,7 +44,7 @@ public class FlightController {
         return ResponseEntity.ok(flightService.toDto(flight));
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     public ResponseEntity<List<FlightDto>> getAllFlights() {
         List<Flight> flights = flightService.getAllFlights();
         if (flights.isEmpty()) {
@@ -55,12 +57,14 @@ public class FlightController {
     }
 
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<FlightDto> updateFlight(@Valid @PathVariable Long id, @RequestBody FlightDto req) {
         Flight updatedFlight = flightService.updateFlight(id, req);
         return ResponseEntity.ok(flightService.toDto(updatedFlight));
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
         flightService.deleteFlight(id);
         return ResponseEntity.noContent().build();

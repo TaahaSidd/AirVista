@@ -61,7 +61,7 @@ public class SecurityConfig {
 
                         // 5. User/Admin POST for creating a Booking (specific endpoint, before general
                         // Booking POST)
-                        .requestMatchers(HttpMethod.POST, "/AirVista/Booking/create")
+                        .requestMatchers(HttpMethod.POST, "/AirVista/Booking/initiate")
                         .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 
                         // 6. Public GET Requests for all main resources (browsing)

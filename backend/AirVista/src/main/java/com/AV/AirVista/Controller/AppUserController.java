@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.AV.AirVista.Dto.AppUserDto;
+import com.AV.AirVista.Dto.Request.UserCreationByAdminRequestDto;
 import com.AV.AirVista.Model.AppUser;
 import com.AV.AirVista.Model.UserProfileRequest;
 import com.AV.AirVista.Model.UserProfileResponse;
@@ -33,8 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AppUserController {
 
-    @Autowired
-    private AppUserService userService;
+    private final AppUserService userService;
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -148,4 +147,10 @@ public class AppUserController {
         return userService.deleteUser(id);
     }
 
+    @PostMapping("/create-admin")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<AppUser> createAdmin(@Valid @RequestBody UserCreationByAdminRequestDto req) {
+        AppUser createdUser = userService.createAdminUser(req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
 }

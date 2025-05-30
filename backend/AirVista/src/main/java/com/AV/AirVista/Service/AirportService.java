@@ -33,7 +33,10 @@ public class AirportService {
     }
 
     public Optional<Airport> getAirportByCode(String code) {
-        return airportRepo.findByCode(code);
+        if (code == null) {
+            return Optional.empty();
+        }
+        return airportRepo.findByCode(code.toUpperCase());
     }
 
     // Update Airport

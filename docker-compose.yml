@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # AirVista Spring Boot Backend Service
+  airvista-backend:
+    build:
+      # This context path should point to the directory containing your backend's Dockerfile
+      # Based on your path, it looks like it's in 'backend/AirVista/' relative to this docker-compose.yml
+      context: ./backend/AirVista
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    # Load environment variables from the .env file (for JWT secret and DB credentials)
+    env_file:
+      - .env
+    depends_on:
+      - db # Ensures the database container starts before the backend
+    networks:
+      - airvista-network # Connect to the same custom network as the database
+
+  # MySQL Database Service
+  db:
+    image: mysql:8.0 # Using MySQL 8.0 image
+    ports:
+      - "3306:3306" # Optional: Expose database port for local access (e.g., via MySQL Workbench)
+    # Load environment variables from the .env file for database credentials
+    env_file:
+      - .env
+    volumes:
+      - db-data:/var/lib/mysql # Persist database data (so your data isn't lost if container is removed)
+    networks:
+      - airvista-network
+  # --- OPTIONAL: If you have a React/Angular/Vue frontend, you would add it here ---
+  # airvista-frontend:
+  #   build:
+  #     context: ./frontend/airvista-frontend # Example path to your frontend project
+  #     dockerfile: Dockerfile.frontend # Example: name your frontend Dockerfile differently
+  #   ports:
+  #     - "3000:3000" # Map host port to frontend app port (e.g., 3000 for React dev server)
+  #   depends_on:
+  #     - airvista-backend # Frontend might depend on backend being up
+  #   networks:
+  #     - airvista-network
+  #   environment:
+  #     REACT_APP_BACKEND_URL: http://airvista-backend:8080 # How frontend talks to backend internally
+  # --- END OPTIONAL FRONTEND ---
+
+  # Define a custom network for your services to communicate with each other internally
+networks:
+  airvista-network:
+
+    # Define a volume for persistent database storage
+volumes:
+  db-data:

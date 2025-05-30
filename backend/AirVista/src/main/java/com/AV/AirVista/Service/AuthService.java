@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.AV.AirVista.Dto.Request.AuthenticationRequest;
+import com.AV.AirVista.Dto.Request.LoginRequest;
 import com.AV.AirVista.Dto.Request.RefreshTokenRequest;
 import com.AV.AirVista.Dto.Request.UserRegistrationRequestDto;
 import com.AV.AirVista.Dto.Response.AuthenticationResponse;
@@ -52,7 +52,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthenticationResponse authenticate(AuthenticationRequest req) {
+    public AuthenticationResponse authenticate(LoginRequest req) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         req.getEmail(),
