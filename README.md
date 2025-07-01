@@ -53,7 +53,7 @@ The application allows users to search for flights based on origin, destination,
 
 * **Lombok:** (Optional, but commonly used) To reduce boilerplate code for getters/setters/constructors.
 
-## 🏁 Getting Started
+## Getting Started
 
 Follow these steps to get your AirVista project up and running on your local machine.
 
