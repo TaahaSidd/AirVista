@@ -1,4 +1,4 @@
-package com.AV.AirVista.Model;
+package com.AV.AirVista.Dto.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

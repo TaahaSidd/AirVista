@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.AV.AirVista.Dto.AppUserDto;
 import com.AV.AirVista.Dto.Request.UserCreationByAdminRequestDto;
+import com.AV.AirVista.Dto.Request.UserProfileRequest;
 import com.AV.AirVista.Model.AppUser;
-import com.AV.AirVista.Model.UserProfileRequest;
 import com.AV.AirVista.Repository.UserRepository;
 
 import jakarta.transaction.Transactional;

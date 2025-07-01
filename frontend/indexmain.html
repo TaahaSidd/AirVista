@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirVista</title>
+    <!-- Link to your custom styles.css -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Tailwind CSS CDN for utility classes and responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Inter Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base styles for Inter font - also defined in styles.css */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<!--FIX THE ISSUE WITH CODE. HERO SECTION IS DONE NOW FOR BOOKING FORM-->
+
+<body class="font-inter bg-gray-50 text-gray-800">
+    <!-- Main Header / Navbar -->
+    <header class="main-header">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <span>AirVista</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link">Home</a></li>
+                        <li><a href="#" class="nav-link">About Us</a></li>
+                        <li><a href="#" class="nav-link">Services</a></li>
+                        <li><a href="#" class="nav-link">Pricing</a></li>
+                        <li><a href="#" class="nav-link">Contact Us</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-actions">
+                    <a href="login.html" class="nav-link-secondary">Login</a>
+                    <a href="register.html" class="btn-primary btn-secondary-color">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero container">
+        <!-- Content within the hero is now implicitly constrained by .container -->
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Find And Book<br>A Great Experience</h1>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                    industry's standard dummy text ever since.</p>
+                <a href="#" class="btn-primary py-3 px-20 text-lg font-bold ">Book a Trip</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form Wrapper - This is a unique element that needs its own centering and padding -->
+    <div id="booking-form-section" class="booking-form-wrapper">
+        <form id="searchForm" class="booking-form container"> <!-- Container for internal padding -->
+            <div class="trip-type">
+                <button type="button" class="trip-type-btn active">Round Trip</button>
+                <button type="button" class="trip-type-btn">One Way</button>
+            </div>
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="departure-airport" class="sr-only">Departure Airport</label>
+                    <i class="fas fa-plane-departure"></i>
+                    <input type="text" id="departure-airport" name="departure_airport" placeholder="Departure Airport"
+                        required>
+                </div>
+                <div class="input-group">
+                    <label for="arrival-airport" class="sr-only">Arrival Airport</label>
+                    <i class="fas fa-plane-arrival"></i>
+                    <input type="text" id="arrival-airport" name="arrival_airport" placeholder="Arrival Airport"
+                        required>
+                </div>
+                <div class="input-group">
+                    <label for="departure-date" class="sr-only">Departure Date</label>
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" id="departure-date" name="departure_date" required>
+                </div>
+                <div class="input-group">
+                    <label for="return-date" class="sr-only">Return Date</label>
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" id="return-date" name="return_date" required>
+                </div>
+                <div class="input-group">
+                    <label for="passengers" class="sr-only">Passengers</label>
+                    <i class="fas fa-user-friends"></i>
+                    <input type="text" id="passengers" name="passengers" placeholder="1 Adult, 1 Child" required>
+                </div>
+                <div class="input-group">
+                    <label for="class" class="sr-only">Class</label>
+                    <i class="fas fa-chair"></i>
+                    <input type="text" id="class" name="class" placeholder="Economy Class" required>
+                </div>
+                <button type="submit" class="btn-primary py-3 px-20 text-lg font-bold">Search Flight</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Travel Support Section -->
+    <section class="travel-support-section container text-center">
+        <!-- Content implicitly constrained by .container -->
+        <h2>Travel Support</h2>
+        <h3>Plan Your Travel With Confidence</h3>
+        <p>Find Help With Your Booking And Travel Plans, And See What To Expect Along Your Journey.</p>
+        <div class="support-grid">
+            <div class="support-items-wrapper">
+                <div class="support-item">
+                    <span class="support-number">01</span>
+                    <h4>Travel Requirements For Dubai</h4>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
+                        the
+                        industry's standard dummy text ever since.</p>
+                </div>
+                <div class="support-item">
+                    <span class="support-number">02</span>
+                    <h4>Travel Requirements By Destination</h4>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
+                        the
+                        industry's standard dummy text ever since.</p>
+                </div>
+                <div class="support-item">
+                    <span class="support-number">03</span>
+                    <h4>Multi-Risk Travel Insurance</h4>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
+                        the
+                        industry's standard dummy text ever since.</p>
+                </div>
+            </div>
+            <div class="support-images">
+                <!-- Corrected paths for local assets -->
+                <img src="/frontend/assets/wing1.jpg" alt="Airplane Window View 1">
+                <img src="/frontend/assets/wing2.jpg" alt="Airplane Window View 2">
+                <img src="/frontend/assets/wing3.jpg" alt="Airplane Window View 3">
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Destinations Section -->
+    <section class="popular-destinations container text-center">
+        <!-- Content implicitly constrained by .container -->
+        <h2>Popular Destination</h2>
+        <p>Find Help With Your Booking And Travel Plans, And See What To Expect Along Your Journey.</p>
+        <div class="destinations-grid">
+            <div class="destination-card">
+                <!-- Corrected paths for local assets -->
+                <img src="/frontend/assets/trip-location-img1.jpg" alt="Forest Wild Life">
+                <div class="destination-info">
+                    <h4>Forest Wild Life</h4>
+                    <span class="rating">4.2</span>
+                    <span class="location">NPT, Indonesia</span>
+                </div>
+            </div>
+            <div class="destination-card">
+                <!-- Corrected paths for local assets -->
+                <img src="/frontend/assets/trip-location-img2.jpg" alt="City Skyline">
+                <div class="destination-info">
+                    <h4>City Skyline</h4>
+                    <span class="rating">4.7</span>
+                    <span class="location">NYK, USA</span>
+                </div>
+            </div>
+            <div class="destination-card">
+                <!-- Corrected paths for local assets -->
+                <img src="/frontend/assets/trip-location-img3.jpg" alt="Desert Oasis">
+                <div class="destination-info">
+                    <h4>Desert Oasis</h4>
+                    <span class="rating">4.5</span>
+                    <span class="location">DXB, UAE</span>
+                </div>
+            </div>
+            <div class="destination-card">
+                <!-- Corrected paths for local assets -->
+                <img src="/frontend/assets/trip-location-img4.jpg" alt="Tropical Island">
+                <div class="destination-info">
+                    <h4>Tropical Island</h4>
+                    <span class="rating">4.8</span>
+                    <span class="location">Bali, Indonesia</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="why-choose-us-section container">
+        <!-- Content implicitly constrained by .container -->
+        <div class="why-choose-us-content">
+            <div class="why-image">
+                <!-- Corrected path for local asset (removed trailing space) -->
+                <img src="/frontend/assets/why-choose-us-img.jpg" alt="Emirates Plane">
+            </div>
+            <div class="why-content">
+                <h2>Why Choose Us</h2>
+                <ul>
+                    <li><span class="icon"><i class="fas fa-check-circle"></i></span> <b>Easy Bookings</b> Ditch the
+                        paperwork and phone calls! Our intuitive
+                        platform lets you snag the perfect flight.</li>
+                    <li><span class="icon"><i class="fas fa-headset"></i></span> <b>24/7 Support</b> Our friendly and
+                        knowledgeable team is on standby
+                        24/7 to assist you with any bumps along the way.</li>
+                    <li><span class="icon"><i class="fas fa-globe-americas"></i></span> <b>Beyond Flights</b> Your
+                        adventure doesn't end at the airport. We're
+                        your one-stop shop for crafting the ultimate travel.</li>
+                    <li><span class="icon"><i class="fas fa-tags"></i></span> <b>Price Saver</b> Our smart price tracker
+                        monitors fluctuations in
+                        real-time, alerting you to potential savings you might miss.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Unaccompanied Minors Lounge Section -->
+    <section class="minors-lounge-section container">
+        <!-- Content implicitly constrained by .container -->
+        <h2 class="text-center">Unaccompanied Minors Lounge</h2>
+        <div class="minors-lounge-content">
+            <div class="minors-info">
+                <h4>Help Through The Airport</h4>
+                <p>Our dedicated staff provides comprehensive assistance from check-in to boarding, ensuring a smooth
+                    and stress-free airport experience for young travelers.</p>
+                <h4>Priority Boarding</h4>
+                <p>Unaccompanied minors receive priority boarding, allowing them to settle comfortably into their seats
+                    before other passengers, reducing any pre-flight anxieties.</p>
+                <h4>Care On The Flight</h4>
+                <p>During the flight, our cabin crew keeps a watchful eye on unaccompanied minors, providing attentive
+                    care, meals, and entertainment to make their journey enjoyable.</p>
+                <h4>Support When They Land</h4>
+                <p>Upon arrival, our ground staff will meet and assist unaccompanied minors through customs and baggage
+                    claim, ensuring they are safely handed over to their designated guardian.</p>
+            </div>
+            <div class="minors-images-container">
+                <!-- Corrected typo from /assest/ to /assets/ -->
+                <img src="/frontend/assets/cc1.jpg" alt="Crew with child">
+                <img src="/frontend/assets/cc2.jpg" alt="Child on plane">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+
+                        <span>AirVista</span>
+                    </div>
+                    <p>"Seamless journeys, exceptional comfort. Experience the skies with AirVista, where every flight
+                        is a
+                        journey to remember."</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Flights</a></li>
+                        <li><a href="#">Destinations</a></li>
+                        <li><a href="#">Travel Guides</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#">Terms of Use</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone-alt"></i> +1 (123) 456-7890</li>
+                        <li><i class="fas fa-envelope"></i> info@airvista.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 AirVista Lane, Skycity, SC 12345</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; Copyright 2025 by AirVista. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+<!-- Fix all the spacing issues between the sections -->

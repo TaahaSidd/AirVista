@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "refresh_tokens")
+@Table(name = "refresh_tokens_AirVista")
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

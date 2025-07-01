@@ -27,6 +27,7 @@ public class AviationStackService {
 
     private static final DateTimeFormatter AVIATIONSTACK_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
+    @SuppressWarnings("UseSpecificCatch")
     public Optional<FlightData> getFlightStatus(String flightNumber, String flightDate) {
         String apiUrl = UriComponentsBuilder.fromHttpUrl(avStackConfig.getBaseUrl())
                 .path("/flights")
@@ -59,7 +60,7 @@ public class AviationStackService {
     /**
      * Fetches real-time flight status and updates the corresponding Flight entity
      * in your database.
-     * 
+     *
      * @param flightId The ID of your internal Flight entity.
      * @return The updated Flight entity or an empty Optional if not found or status
      *         not updated.

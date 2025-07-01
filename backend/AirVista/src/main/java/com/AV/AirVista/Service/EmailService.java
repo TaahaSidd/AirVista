@@ -3,8 +3,10 @@ package com.AV.AirVista.Service;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,12 +30,31 @@ public class EmailService {
     }
 
     public void sendWelcomeEmail(String recipientEmail, String userName) {
-        String subject = "Welcome to AirVista, " + userName + "!";
-        String text = "Dear" + userName + ",\n\n"
-                + "Welcome aboard AirVista! We're excited to have you as a part of our community. \n "
-                + "Best Regards,\n"
-                + "AirVista Team.";
-        sendEmail(recipientEmail, subject, text);
+        try {
+            jakarta.mail.internet.MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(recipientEmail);
+            helper.setSubject("Welcome to AirVista, " + userName + "!");
+            String htmlContent = "<html><body>"
+                    + "<p>Dear " + userName + ",</p>"
+                    + "<p>Welcome aboard AirVista! We're excited to have you as a part of our community.</p>"
+                    + "<img src='cid:welcomeImage' style='width:300px;'/>"
+                    + "<p>Best Regards,<br/>AirVista Team.</p>"
+                    + "</body></html>";
+            helper.setText(htmlContent, true); // true = isHtml
+
+            // Add the image as an inline resource
+            org.springframework.core.io.ClassPathResource image = new org.springframework.core.io.ClassPathResource(
+                    "static/welcome-image.jpg");
+            helper.addInline("welcomeImage", image);
+
+            javaMailSender.send(message);
+            System.out.println("HTML Welcome email with inline image sent successfully to: " + recipientEmail);
+        } catch (MessagingException | MailException e) {
+            System.err.println("Failed to send HTML welcome email to: " + recipientEmail);
+            e.printStackTrace();
+        }
     }
 
     public void bookingConfirmationEmail(String recipientEmail, Long bookingId, String flightDetails) {

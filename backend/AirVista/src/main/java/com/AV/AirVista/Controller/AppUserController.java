@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.AV.AirVista.Dto.AppUserDto;
 import com.AV.AirVista.Dto.Request.UserCreationByAdminRequestDto;
+import com.AV.AirVista.Dto.Request.UserProfileRequest;
+import com.AV.AirVista.Dto.Response.UserProfileResponse;
 import com.AV.AirVista.Model.AppUser;
-import com.AV.AirVista.Model.UserProfileRequest;
-import com.AV.AirVista.Model.UserProfileResponse;
 import com.AV.AirVista.Service.AppUserService;
 
 import jakarta.validation.Valid;
