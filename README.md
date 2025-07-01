@@ -192,11 +192,11 @@ Contributions are welcome! If you have suggestions for improvements or new featu
 
 6.  Open a Pull Request.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
 
-## 📧 Contact
+## Contact
 
 For any questions or inquiries, please reach out:
 
