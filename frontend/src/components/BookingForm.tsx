@@ -67,8 +67,8 @@ const BookingForm = () => {
     navigate('/flight-search-results', {
       state: {
         searchParams: {
-          from: fromInput.split(' ')[0],
-          to: toInput.split(' ')[0],
+          from,
+          to,
           departureDate,
           returnDate: activeTab === 'round-trip' ? returnDate : undefined,
           passengers: `${adults} Adult${adults > 1 ? 's' : ''}${children > 0 ? `, ${children} Child${children > 1 ? 'ren' : ''}` : ''}`,
@@ -282,7 +282,7 @@ const BookingForm = () => {
                             <span>{children}</span>
                             <button type="button" onClick={() => setChildren(Math.min(6, children + 1))} className="p-1 border rounded" disabled={children >= 6}><Plus /></button>
                           </div>
-                        </div>
+                    </div>
                       </PopoverContent>
                     </Popover>
                   </div>

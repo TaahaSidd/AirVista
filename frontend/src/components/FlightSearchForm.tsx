@@ -80,27 +80,27 @@ const FlightSearchForm = ({ searchParams, setSearchParams }: FlightSearchFormPro
         <button
           onClick={() => setActiveTab("round-trip")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === "round-trip"
-            ? "bg-white text-gray-900 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
-            }`}
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
         >
           Round Trip
         </button>
         <button
           onClick={() => setActiveTab("one-way")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === "one-way"
-            ? "bg-white text-gray-900 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
-            }`}
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
         >
           One-way
         </button>
         <button
           onClick={() => setActiveTab("multi-city")}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === "multi-city"
-            ? "bg-white text-gray-900 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
-            }`}
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
         >
           Multi-City
         </button>

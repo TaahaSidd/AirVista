@@ -25,11 +25,26 @@ const amenityIcons = {
 // Airline logo mapping (add more as needed)
 const airlineLogos: Record<string, string> = {
   'Emirates': '/assets/emirates-airlines-logo.png',
-  'Qatar Airways': '/assets/qatar-ariways-logo.png',
+  'Qatar Airways': '/assets/qatar-airways-logo.png',
   'Lufthansa': '/assets/lufthansa-airways-logo.jpg',
   'British Airways': '/assets/british-airways-logo.jpg',
   'SpiceJet': '/assets/spicejet-logo.png',
   'United Airlines': '/assets/united-airlines-logo.png',
+  'Air India': '/assets/air-india-logo.png',
+  'Air France': '/assets/air-france-logo.png',
+  'American Airlines': '/assets/american-airlines-logo.png',
+  'Delta Airlines': '/assets/delta-airlines-logo.png',
+  'Southwest Airlines': '/assets/southwest-airlines-logo.png',
+  'Jet Airways': '/assets/jet-airways-logo.png',
+  'AirAsia': '/assets/airasia-logo.jpg',
+  'Vistara': '/assets/vistara-logo.png',
+  'Air China': '/assets/air-china-logo.png',
+  'Air Canada': '/assets/air-canada-logo.png',
+  'Air New Zealand': '/assets/air-new-zealand-logo.png',
+  'Air Seychelles': '/assets/air-seychelles-logo.png',
+  'Air Tahiti Nui': '/assets/air-tahiti-nui-logo.png',
+  'Air Transat': '/assets/air-transat-logo.png',
+  'Air India Express': '/assets/air-india-express-logo.png',
   // Add more airline logo mappings here
 };
 
