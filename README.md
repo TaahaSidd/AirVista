@@ -6,7 +6,7 @@
 [![Database: PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
 ## Live Demo
-Check out the live website here:[(AirVista)](https://airvista-lt.netlify.app)
+Check out the live website here:  [(AirVista)](https://airvista-lt.netlify.app)
 
 ---
 
