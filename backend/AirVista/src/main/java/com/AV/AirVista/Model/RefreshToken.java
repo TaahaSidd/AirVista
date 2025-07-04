@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "refresh_tokens_AirVista")
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false, length = 500)
