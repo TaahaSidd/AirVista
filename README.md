@@ -24,8 +24,6 @@ The application allows users to search for flights based on origin, destination,
 
 * **Detailed Flight Listings:** View comprehensive information for each flight, including airline, flight number, price, timings, stops, and available seats.
 
-* **Responsive UI:** A mobile-first design ensures a great experience across various devices.
-
 * **Robust Backend:** Powered by Spring Boot for secure and efficient data handling.
 
 * **Database Integration:** Utilizes PostgreSQL for reliable data storage of flights and airport information.
