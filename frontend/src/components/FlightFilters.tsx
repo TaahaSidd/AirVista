@@ -3,20 +3,56 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Plane, DollarSign } from "lucide-react";
+import { Clock, Plane } from "lucide-react";
 import { useState } from "react";
 
 interface FlightFiltersProps {
-  minPrice: number;
-  maxPrice: number;
-  onPriceChange: (range: [number, number]) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+  selectedAirlines: string[];
+  setSelectedAirlines: (airlines: string[]) => void;
+  selectedStops: string[];
+  setSelectedStops: (stops: string[]) => void;
+  selectedTimes: string[];
+  setSelectedTimes: (times: string[]) => void;
+  durationRange: [number, number];
+  setDurationRange: (range: [number, number]) => void;
 }
 
-const FlightFilters = ({ minPrice, maxPrice, onPriceChange }: FlightFiltersProps) => {
-  const [priceRange, setPriceRange] = useState<[number, number]>([minPrice, maxPrice]);
-  const handleSliderChange = (range: [number, number]) => {
-    setPriceRange(range);
-    onPriceChange(range);
+const FlightFilters = ({
+  priceRange, setPriceRange,
+  selectedAirlines, setSelectedAirlines,
+  selectedStops, setSelectedStops,
+  selectedTimes, setSelectedTimes,
+  durationRange, setDurationRange
+}: FlightFiltersProps) => {
+  // Airline options (should be dynamic in real app)
+  const airlineOptions = [
+    "Emirates", "Qatar Airways", "Lufthansa", "British Airways", "Turkish Airlines"
+  ];
+  const stopOptions = ["Non-stop", "1 Stop", "2+ Stops"];
+  const timeOptions = ["Early Morning", "Afternoon", "Evening", "Night"];
+
+  const handleAirlineChange = (airline: string) => {
+    setSelectedAirlines(
+      selectedAirlines.includes(airline)
+        ? selectedAirlines.filter(a => a !== airline)
+        : [...selectedAirlines, airline]
+    );
+  };
+  const handleStopChange = (stop: string) => {
+    setSelectedStops(
+      selectedStops.includes(stop)
+        ? selectedStops.filter(s => s !== stop)
+        : [...selectedStops, stop]
+    );
+  };
+  const handleTimeChange = (time: string) => {
+    setSelectedTimes(
+      selectedTimes.includes(time)
+        ? selectedTimes.filter(t => t !== time)
+        : [...selectedTimes, time]
+    );
   };
   return (
     <div className="space-y-6">
@@ -24,14 +60,14 @@ const FlightFilters = ({ minPrice, maxPrice, onPriceChange }: FlightFiltersProps
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center">
-            <DollarSign className="w-5 h-5 mr-2 text-primary" />
+            <span className="w-5 h-5 mr-2 text-primary text-xl">₹</span>
             Price Range
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Slider
             value={priceRange}
-            onValueChange={handleSliderChange}
+            onValueChange={setPriceRange}
             max={70000}
             min={20000}
             step={2500}
@@ -53,30 +89,18 @@ const FlightFilters = ({ minPrice, maxPrice, onPriceChange }: FlightFiltersProps
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {[
-            { name: "Emirates", count: 24, price: "₹48,750" },
-            { name: "Qatar Airways", count: 18, price: "₹39,000" },
-            { name: "Lufthansa", count: 12, price: "₹36,000" },
-            { name: "British Airways", count: 15, price: "₹44,250" },
-            { name: "Turkish Airlines", count: 21, price: "₹30,750" },
-          ].map((airline) => (
-            <div key={airline.name} className="flex items-center space-x-3">
-              <Checkbox id={airline.name.toLowerCase().replace(" ", "-")} />
+          {airlineOptions.map((airline) => (
+            <div key={airline} className="flex items-center space-x-3">
+              <Checkbox
+                id={airline.toLowerCase().replace(/\s+/g, "-")}
+                checked={selectedAirlines.includes(airline)}
+                onCheckedChange={() => handleAirlineChange(airline)}
+              />
               <Label
-                htmlFor={airline.name.toLowerCase().replace(" ", "-")}
+                htmlFor={airline.toLowerCase().replace(/\s+/g, "-")}
                 className="flex-1 cursor-pointer"
               >
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">{airline.name}</span>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="text-xs">
-                      {airline.count}
-                    </Badge>
-                    <span className="text-xs text-primary font-medium">
-                      {airline.price}
-                    </span>
-                  </div>
-                </div>
+                <span className="text-sm">{airline}</span>
               </Label>
             </div>
           ))}
@@ -92,29 +116,18 @@ const FlightFilters = ({ minPrice, maxPrice, onPriceChange }: FlightFiltersProps
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {[
-            { time: "Early Morning", period: "06:00 - 12:00", count: 42 },
-            { time: "Afternoon", period: "12:00 - 18:00", count: 38 },
-            { time: "Evening", period: "18:00 - 24:00", count: 24 },
-            { time: "Night", period: "00:00 - 06:00", count: 16 },
-          ].map((timeSlot) => (
-            <div key={timeSlot.time} className="flex items-center space-x-3">
-              <Checkbox id={timeSlot.time.toLowerCase().replace(" ", "-")} />
+          {timeOptions.map((time) => (
+            <div key={time} className="flex items-center space-x-3">
+              <Checkbox
+                id={time.toLowerCase().replace(/\s+/g, "-")}
+                checked={selectedTimes.includes(time)}
+                onCheckedChange={() => handleTimeChange(time)}
+              />
               <Label
-                htmlFor={timeSlot.time.toLowerCase().replace(" ", "-")}
+                htmlFor={time.toLowerCase().replace(/\s+/g, "-")}
                 className="flex-1 cursor-pointer"
               >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm font-medium">{timeSlot.time}</div>
-                    <div className="text-xs text-gray-600">
-                      {timeSlot.period}
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {timeSlot.count}
-                  </Badge>
-                </div>
+                <span className="text-sm">{time}</span>
               </Label>
             </div>
           ))}
@@ -127,28 +140,18 @@ const FlightFilters = ({ minPrice, maxPrice, onPriceChange }: FlightFiltersProps
           <CardTitle className="text-lg">Stops</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {[
-            { type: "Non-stop", count: 28, price: "₹65,000" },
-            { type: "1 Stop", count: 45, price: "₹42,000" },
-            { type: "2+ Stops", count: 23, price: "₹32,000" },
-          ].map((stop) => (
-            <div key={stop.type} className="flex items-center space-x-3">
-              <Checkbox id={stop.type.toLowerCase().replace(" ", "-")} />
+          {stopOptions.map((stop) => (
+            <div key={stop} className="flex items-center space-x-3">
+              <Checkbox
+                id={stop.toLowerCase().replace(/\s+/g, "-")}
+                checked={selectedStops.includes(stop)}
+                onCheckedChange={() => handleStopChange(stop)}
+              />
               <Label
-                htmlFor={stop.type.toLowerCase().replace(" ", "-")}
+                htmlFor={stop.toLowerCase().replace(/\s+/g, "-")}
                 className="flex-1 cursor-pointer"
               >
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">{stop.type}</span>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="outline" className="text-xs">
-                      {stop.count}
-                    </Badge>
-                    <span className="text-xs text-primary font-medium">
-                      {stop.price}
-                    </span>
-                  </div>
-                </div>
+                <span className="text-sm">{stop}</span>
               </Label>
             </div>
           ))}
@@ -162,7 +165,8 @@ const FlightFilters = ({ minPrice, maxPrice, onPriceChange }: FlightFiltersProps
         </CardHeader>
         <CardContent className="space-y-4">
           <Slider
-            defaultValue={[4, 20]}
+            value={durationRange}
+            onValueChange={setDurationRange}
             max={30}
             min={2}
             step={1}

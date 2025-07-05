@@ -12,12 +12,12 @@ const Header = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const [logoutOpen, setLogoutOpen] = useState(false);
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="absolute top-0 left-0 w-full z-30 bg-black/40 backdrop-blur-md border-b border-white/10 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/')}>
-            <span className="text-xl font-bold text-gray-900">AirVista</span>
+            <span className="text-xl font-bold text-white">AirVista</span>
           </div>
 
           {/* Navigation */}
@@ -93,7 +93,7 @@ const Header = () => {
           {/* Mobile menu button */}
           <button className="md:hidden p-2">
             <svg
-              className="w-6 h-6"
+              className="w-6 h-6 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

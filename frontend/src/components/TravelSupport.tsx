@@ -1,116 +1,62 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Shield, FileText } from "lucide-react";
+import { motion } from "motion/react";
+import { WorldMap } from "./ui/world-map";
+
+// Use real cities on land for accurate map points
+const route = [
+  { lat: 37.7749, lng: -122.4194 }, // San Francisco (US West Coast)
+  { lat: -23.5505, lng: -46.6333 }, // São Paulo (South America)
+  { lat: 6.5244, lng: 3.3792 }, // Lagos (Africa)
+  { lat: 51.5074, lng: -0.1278 }, // London (Europe)
+  { lat: 24.7136, lng: 46.6753 }, // Riyadh (above Saudi)
+  { lat: 28.6139, lng: 77.2090 }, // Delhi (above India)
+  { lat: -33.8688, lng: 151.2093 }, // Sydney (Australia)
+];
+
+// Generate lines between consecutive cities
+const dots = route.slice(0, -1).map((city, i) => ({
+  start: city,
+  end: route[i + 1],
+}));
 
 const TravelSupport = () => {
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-[#2a133d]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="text-sm font-medium text-muted-foreground mb-2 tracking-wider uppercase">
-            TRAVEL SUPPORT
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Plan Your Travel With Confidence
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find Help With Your Booking And Travel Plans, And See What To Expect
-            Along Your Journey.
-          </p>
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 1,
+            }}
+          >
+            <div className="text-sm font-medium text-purple-300 mb-2 tracking-wider uppercase">
+              EXPLORE THE WORLD
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Fly Anywhere With AirVista
+            </h2>
+            <p className="text-lg text-purple-200 max-w-2xl mx-auto">
+              Discover destinations across the globe and experience seamless travel with our comprehensive flight booking platform.
+            </p>
+          </motion.div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
-          <div className="space-y-8">
-            {/* Travel Requirements For Dubai */}
-            <div className="space-y-4">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Travel Requirements For Dubai
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Stay updated on the latest travel requirements for Dubai, including visa policies, COVID-19 guidelines, and airport procedures to ensure a hassle-free journey.
-                  </p>
-                  <Badge variant="secondary" className="mt-2">
-                    SEE DETAILS
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            {/* Travel Requirements By Destination */}
-            <div className="space-y-4">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <FileText className="w-6 h-6 text-green-600" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Travel Requirements By Destination
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Access up-to-date travel requirements for your destination, including entry restrictions, health protocols, and documentation needed for a smooth trip.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Multi-Risk Travel Insurance */}
-            <div className="space-y-4">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-blue-600" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Multi-Risk Travel Insurance
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    Protect your trip with our comprehensive multi-risk travel insurance, covering medical emergencies, trip cancellations, lost baggage, and more for peace of mind.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Images */}
-          <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Large image */}
-              <div className="col-span-2">
-                <img
-                  src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80"
-                  alt="Beach destination"
-                  className="w-full h-64 object-cover rounded-2xl"
-                />
-              </div>
-              {/* Two smaller images */}
-              <div>
-                <img
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&q=80"
-                  alt="Mountain landscape"
-                  className="w-full h-32 object-cover rounded-2xl"
-                />
-              </div>
-              <div>
-                <img
-                  src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=300&q=80"
-                  alt="Countryside view"
-                  className="w-full h-32 object-cover rounded-2xl"
-                />
-              </div>
-            </div>
+        {/* World Map */}
+        <div className="flex items-center justify-center w-full h-[40rem] relative">
+          <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent to-[#2a133d] z-40" />
+          <div className="absolute w-full h-full z-10">
+            <WorldMap
+              lineColor="#8b5cf6"
+              dots={dots}
+            />
           </div>
         </div>
       </div>
