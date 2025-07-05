@@ -12,7 +12,7 @@ Check out the live website here:  [(AirVista)](https://airvista-lt.netlify.app)
 
 ## Project Overview
 
-Welcome to **AirVista**! This project is a modern, full-stack flight booking application designed to provide users with a seamless experience for finding and booking flights. With a robust Spring Boot backend handling flight data and user management, and a dynamic React Native frontend for an intuitive user interface, AirVista aims to simplify travel planning.
+Welcome to **AirVista**! This project is a modern, full-stack flight booking application designed to provide users with a seamless experience for finding and booking flights. With a robust Spring Boot backend handling flight data and user management, and a dynamic React.js (or React based) frontend for an intuitive user interface, designed for web browsers, AirVista aims to simplify travel planning.
 
 The application allows users to search for flights based on origin, destination, and date, view detailed flight information, and provides a foundation for future features like user authentication and booking management.
 
@@ -36,9 +36,9 @@ The application allows users to search for flights based on origin, destination,
 
 ### Frontend
 
-* **React Native:** A framework for building native mobile apps using React.
+* **React Js:** The core JavaScript library for building interactive user interfaces for the web.
 
-* **Expo:** A set of tools and services built around React Native to help you build, deploy, and quickly iterate on iOS, Android, and web apps from the same JavaScript codebase.
+* **Expo:** A development platform for React, used here to streamline the development and deployment of the AirVista web application.
 
 * **React Navigation:** For managing navigation and routing between different screens in the application.
 
@@ -71,8 +71,6 @@ Before you begin, ensure you have the following installed:
 * **PostgreSQL:** [Download PostgreSQL](https://www.postgresql.org/download/)
 
 * **VS Code (Recommended IDE):** [Download VS Code](https://code.visualstudio.com/)
-
-* **Expo Go App:** On your mobile device (iOS App Store or Android Play Store) for testing the React Native app on a physical device.
 
 ### Backend Setup (Spring Boot)
 
@@ -143,15 +141,13 @@ Before you begin, ensure you have the following installed:
 3.  **Start the Expo development server:**
 
     ```bash
-    npx expo start
+    npx expo start --web
     ```
 
-    This will open a new tab in your browser with the Expo Developer Tools and display a QR code in your terminal.
+    The frontend will typically run on http://localhost:19006 or http://localhost:8081 (or another available port)." (Expo web defaults to 19006, but it can vary)
 
 4.  **Run the app:**
-
-    * **On your phone:** Scan the QR code using the Expo Go app.
-
+5.  
     * **In** web **browser:** Press `w` in your terminal or click "Run in web browser" on the Expo Dev Tools page.
 
     * **On emulator/simulator:** Press `a` for Android or `i` for iOS (requires Android Studio/Xcode setup).
@@ -161,7 +157,7 @@ Before you begin, ensure you have the following installed:
 
 Once both the backend and frontend servers are running:
 
-1.  **Access the App:** Open the React Native app via Expo Go on your phone or in your web browser.
+1.  **Access the App:** Once both the backend and frontend servers are running, simply open your web browser and navigate to the frontend server's address (e.g., http://localhost:19006 or the deployed URL).
 
 2.  **Navigate to Search:** The app should land on the main page. Navigate to the flight search section (e.g., by clicking a "Search Flights" button or if it's the initial screen).
 
