@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { Plane, Clock, ArrowRight, Info } from 'lucide-react';
+import axios from 'axios';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Seat {
     id: number;
@@ -20,87 +22,108 @@ interface Flight {
 
 // Airline logo mapping (add more as needed)
 const airlineLogos: Record<string, string> = {
-    'Emirates': '/assets/emirates-airlines-logo.png',
-    'Qatar Airways': '/assets/qatar-ariways-logo.png',
+    'Emirates': 'emirates-airlines-logo.png',
+    'Qatar Airways': 'qatar-ariways-logo.png',
     'Lufthansa': '/assets/lufthansa-airways-logo.jpg',
-    'British Airways': '/assets/british-airways-logo.jpg',
-    'Air India': '/assets/air-india-logo.jpg',
-    'Air India Express': '/assets/air-india-express-logo.png',
-    'Air Asia': '/assets/air-asia-logo.png',
-    'IndiGo': '/assets/indigo-logo.png',
-    'Vistara': '/assets/vistara-logo.png',
-    'SpiceJet': '/assets/spicejet-logo.png',
-    'GoAir': '/assets/goair-logo.png',
+    'British Airways': 'british-airways-logo.jpg',
+    'SpiceJet': 'spice-jet-logo.jpg',
+    'United Airlines': 'united-airlines-logo.png',
+    'Air India': 'air-india-logo.jpg',
+    'Air France': '/assets/air-france-logo.png',
+    'American Airlines': '/assets/american-airlines-logo.png',
+    'Delta Airlines': '/assets/delta-airlines-logo.png',
+    'Southwest Airlines': '/assets/southwest-airlines-logo.png',
+    'Jet Airways': '/assets/jet-airways-logo.png',
+    'AirAsia': '/assets/airasia-logo.jpg',
+    'Vistara': 'vistara-alrlines-logo.jpg',
+    'Air China': 'airchina-airlines-log.png',
+    'EasyJet': 'easyjet-logo.png',
     // Add more airline logo mappings here
+};
+
+const formatTime = (isoString: string) => {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
+const formatDate = (isoString: string) => {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 const BookingPage: React.FC = () => {
     const { flightId } = useParams<{ flightId: string }>();
     const location = useLocation();
-    const adults = location.state?.adults ?? 1;
-    const children = location.state?.children ?? 0;
+
+    // Initialize local state from location.state on first render only
+    const [init] = useState(() => {
+        if (!location.state || !location.state.flight) {
+            return null;
+        }
+        return {
+            flight: location.state.flight,
+            adults: location.state.adults ?? 1,
+            children: location.state.children ?? 0,
+        };
+    });
+
+    if (!init) {
+        return <div className="text-center text-red-600 font-semibold text-lg py-12">Invalid access. Please select a flight from the search results.</div>;
+    }
+
+    const { flight, adults, children } = init;
     const passengerCount = adults + children;
     const [passengers, setPassengers] = useState(Array.from({ length: passengerCount }, () => ({ name: '', email: '', phone: '' })));
-    const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-    const [flight, setFlight] = useState<Flight | null>(null);
+    const [selectedSeats, setSelectedSeats] = useState<(number | null)[]>(Array(passengerCount).fill(null));
     const [seats, setSeats] = useState<Seat[]>([]);
+    const [seatLoading, setSeatLoading] = useState(false);
+    const [seatError, setSeatError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    // New state for seat selection modal
+    const [seatModalOpen, setSeatModalOpen] = useState(false);
+    const [activePassengerIdx, setActivePassengerIdx] = useState<number | null>(null);
 
     useEffect(() => {
         setLoading(true);
-        let flightData = location.state?.flight;
-        // Normalize structure if coming from results page
-        if (flightData) {
-            if (flightData.deptTime && flightData.arrTime) {
-                flightData = {
-                    ...flightData,
-                    departure: {
-                        time: flightData.deptTime ? flightData.deptTime.slice(11, 16) : '',
-                        airport: flightData.originCode || '',
-                        city: flightData.origin || flightData.originCode || '',
-                    },
-                    arrival: {
-                        time: flightData.arrTime ? flightData.arrTime.slice(11, 16) : '',
-                        airport: flightData.destinationCode || '',
-                        city: flightData.destination || flightData.destinationCode || '',
-                    },
-                    duration: flightData.duration || '',
-                };
-            }
-        } else {
-            // fallback mock data with all required fields
-            flightData = {
-                id: Number(flightId),
-                flightNumber: "AI123",
-                airline: "Emirates",
-                price: 15543,
-                duration: "3h 30m",
-                departure: {
-                    time: "14:30",
-                    airport: "BOM",
-                    city: "Mumbai",
-                },
-                arrival: {
-                    time: "18:00",
-                    airport: "DEL",
-                    city: "Delhi",
-                },
-            };
-        }
-        setFlight(flightData);
-        setSeats([
-            { id: 1, seatNumber: "1A", status: "AVAILABLE" as const },
-            { id: 2, seatNumber: "1B", status: "BOOKED" as const },
-            { id: 3, seatNumber: "1C", status: "AVAILABLE" as const },
-            { id: 4, seatNumber: "2A", status: "AVAILABLE" as const },
-            { id: 5, seatNumber: "2B", status: "BOOKED" as const },
-            { id: 6, seatNumber: "2C", status: "AVAILABLE" as const },
-        ]);
+        // Robust normalization: always populate all fields with fallbacks
+        let flightData = {
+            ...flight,
+            deptTime: flight.deptTime || flight.departure?.time || '',
+            arrTime: flight.arrTime || flight.arrival?.time || '',
+            originCode: flight.originCode || flight.departure?.airport || '',
+            destinationCode: flight.destinationCode || flight.arrival?.airport || '',
+            origin: flight.origin || flight.departure?.city || '',
+            destination: flight.destination || flight.arrival?.city || '',
+            duration: flight.duration || '',
+        };
+        // Optionally, set normalized flightData to state if you want to use it elsewhere
+        // setFlight(flightData);
+        // Defensive local variables for display
+        setNormalizedFlight(flightData);
         setLoading(false);
-    }, [flightId, location.state]);
+    }, [flight]);
+
+    // Local state for normalized flight info
+    const [normalizedFlight, setNormalizedFlight] = useState<any>(null);
+
+    // Fetch seat map from backend
+    useEffect(() => {
+        if (!flightId) return;
+        setSeatLoading(true);
+        setSeatError(null);
+        axios.get<Seat[]>(`/AirVista/seats/flight/${flightId}`)
+            .then(res => setSeats(Array.isArray(res.data) ? res.data : []))
+            .catch(err => setSeatError('Failed to load seat map'))
+            .then(() => setSeatLoading(false));
+    }, [flightId]);
 
     useEffect(() => {
         setPassengers(Array.from({ length: passengerCount }, () => ({ name: '', email: '', phone: '' })));
+        setSelectedSeats(Array(passengerCount).fill(null));
     }, [passengerCount]);
 
     if (loading) return <div>Loading...</div>;
@@ -109,24 +132,17 @@ const BookingPage: React.FC = () => {
     }
 
     // Defensive local variables for departure/arrival (moved after flight null check)
-    let departureCity = '', departureCode = '', departureTime = '', arrivalCity = '', arrivalCode = '', arrivalTime = '';
-    if (typeof flight.departure === 'object' && flight.departure !== null) {
-        departureCity = (flight.departure as any).city || '';
-        departureCode = (flight.departure as any).airport || '';
-        departureTime = (flight.departure as any).time || '';
-    } else if (typeof flight.departure === 'string') {
-        departureCode = flight.departure;
-    }
-    if (typeof flight.arrival === 'object' && flight.arrival !== null) {
-        arrivalCity = (flight.arrival as any).city || '';
-        arrivalCode = (flight.arrival as any).airport || '';
-        arrivalTime = (flight.arrival as any).time || '';
-    } else if (typeof flight.arrival === 'string') {
-        arrivalCode = flight.arrival;
-    }
+    const departureCity = normalizedFlight?.origin || '';
+    const departureCode = normalizedFlight?.originCode || '';
+    const departureTime = formatTime(normalizedFlight?.deptTime);
+    const arrivalCity = normalizedFlight?.destination || '';
+    const arrivalCode = normalizedFlight?.destinationCode || '';
+    const arrivalTime = formatTime(normalizedFlight?.arrTime);
+    const departureDate = formatDate(normalizedFlight?.deptTime);
+    const arrivalDate = formatDate(normalizedFlight?.arrTime);
 
     // Calculate prices
-    const baseFare = flight.price * passengerCount;
+    const baseFare = normalizedFlight?.price * passengerCount;
     const taxes = 86 * passengerCount;
     const total = baseFare + taxes;
 
@@ -166,6 +182,7 @@ const BookingPage: React.FC = () => {
                             <div className="text-center min-w-[90px]">
                                 <div className="text-2xl font-extrabold text-white mb-1">{departureTime || '-'}</div>
                                 <div className="text-lg font-bold text-purple-200">{formatLocation(departureCity, departureCode)}</div>
+                                <div className="text-xs text-purple-300 mt-1">{departureDate}</div>
                             </div>
                             <div className="relative flex items-center w-44 h-8 mx-2">
                                 <div className="w-full border-t-2 border-dashed border-purple-500" style={{ height: '0' }} />
@@ -174,43 +191,81 @@ const BookingPage: React.FC = () => {
                             <div className="text-center min-w-[90px]">
                                 <div className="text-2xl font-extrabold text-white mb-1">{arrivalTime || '-'}</div>
                                 <div className="text-lg font-bold text-purple-200">{formatLocation(arrivalCity, arrivalCode)}</div>
+                                <div className="text-xs text-purple-300 mt-1">{arrivalDate}</div>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 text-purple-200 mt-2 text-base">
                             <Clock className="w-5 h-5" />
-                            <span>{(flight as any).duration || '-'}</span>
+                            <span>{normalizedFlight?.duration || '-'}</span>
                         </div>
                     </div>
 
-                    {/* Seat Selection */}
+                    {/* Passenger Seat Selection */}
                     <div className="mb-6 p-8 rounded-2xl bg-gradient-to-br from-[#1D1F2F]/80 via-[#2A1B3D]/80 to-[#1D1F2F]/80 border border-purple-500/30 shadow-xl backdrop-blur-md transition-all duration-300">
-                        <h2 className="text-lg font-semibold mb-6 flex items-center text-white"><Plane className="w-5 h-5 mr-2 text-purple-400" />Select Your Seat</h2>
-                        {/* Legend */}
-                        <div className="flex items-center gap-6 mb-6">
-                            <div className="flex items-center gap-2 bg-white/10 border border-purple-500/10 rounded-lg px-3 py-1"><div className="w-5 h-5 bg-green-200/80 border border-green-400 rounded" /> <span className="text-sm text-green-200">Available</span></div>
-                            <div className="flex items-center gap-2 bg-white/10 border border-purple-500/10 rounded-lg px-3 py-1"><div className="w-5 h-5 bg-gray-300/80 border border-gray-400 rounded" /> <span className="text-sm text-gray-300">Booked</span></div>
-                            <div className="flex items-center gap-2 bg-white/10 border border-purple-500/10 rounded-lg px-3 py-1"><div className="w-5 h-5 bg-blue-300/80 border-2 border-blue-600 rounded" /> <span className="text-sm text-blue-200">Selected</span></div>
-                        </div>
-                        {selectedSeat && (
-                            <div className="mb-2 text-blue-400 font-medium">Selected Seat: {seats.find(s => s.id === selectedSeat)?.seatNumber}</div>
-                        )}
-                        <div className="grid grid-cols-6 gap-4 mb-2">
-                            {seats.map(seat => (
-                                <div
-                                    key={seat.id}
-                                    className={`p-2 rounded-xl text-center font-semibold transition-all duration-200
-                                    ${seat.status === 'BOOKED' ? 'bg-gray-300/60 text-gray-400 border border-gray-400 cursor-not-allowed' : ''}
-                                    ${seat.status === 'AVAILABLE' ? 'bg-white/10 text-green-200 border border-green-400 hover:scale-105 hover:border-purple-400 hover:shadow-lg cursor-pointer' : ''}
-                                    ${selectedSeat === seat.id ? 'bg-blue-300/80 border-2 border-blue-600 text-blue-900 scale-105 shadow-lg' : ''}
-                                  `}
-                                    onClick={() => seat.status === 'AVAILABLE' && setSelectedSeat(seat.id)}
+                        <h2 className="text-lg font-semibold mb-6 flex items-center text-white"><Plane className="w-5 h-5 mr-2 text-purple-400" />Seat Selection</h2>
+                        {passengers.map((_, idx) => (
+                            <div key={idx} className="flex items-center gap-4 mb-4">
+                                <span className="text-purple-200 font-medium">Passenger {idx + 1}</span>
+                                <span className="text-purple-400">{selectedSeats[idx] !== null ? seats.find(s => s.id === selectedSeats[idx])?.seatNumber || '-' : 'No seat selected'}</span>
+                                <button
+                                    type="button"
+                                    className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                                    onClick={() => { setActivePassengerIdx(idx); setSeatModalOpen(true); }}
                                 >
-                                    {seat.seatNumber}
-                                </div>
-                            ))}
-                        </div>
-                        <div className="text-xs text-purple-200 mt-4">Seats are allotted randomly by default. To select your seat, click on an available seat.</div>
+                                    Select seat
+                                </button>
+                            </div>
+                        ))}
                     </div>
+
+                    {/* Seat Selection Modal */}
+                    <Dialog open={seatModalOpen} onOpenChange={setSeatModalOpen}>
+                        <DialogContent className="max-w-2xl w-full glassmorphic-bar border border-purple-500/30 bg-white/10 backdrop-blur-md shadow-2xl rounded-2xl p-0">
+                            <DialogHeader>
+                                <DialogTitle>Select a seat for Passenger {activePassengerIdx !== null ? activePassengerIdx + 1 : ''}</DialogTitle>
+                            </DialogHeader>
+                            <div className="p-6">
+                                {seatLoading ? (
+                                    <div className="text-purple-300">Loading seat map...</div>
+                                ) : seatError ? (
+                                    <div className="text-red-400">{seatError}</div>
+                                ) : (
+                                    Array.isArray(seats) && seats.length > 0 ? (
+                                        <div className="grid grid-cols-6 gap-4 mb-4">
+                                            {seats.map(seat => {
+                                                const isBooked = seat.status === 'BOOKED';
+                                                const isSelected = selectedSeats.includes(seat.id);
+                                                const isCurrent = selectedSeats[activePassengerIdx ?? 0] === seat.id;
+                                                return (
+                                                    <div
+                                                        key={seat.id}
+                                                        className={`p-2 rounded-xl text-center font-semibold transition-all duration-200
+                                                            ${isBooked ? 'bg-gray-300/60 text-gray-400 border border-gray-400 cursor-not-allowed' : ''}
+                                                            ${!isBooked && isCurrent ? 'bg-blue-300/80 border-2 border-blue-600 text-blue-900 scale-105 shadow-lg' : ''}
+                                                            ${!isBooked && !isCurrent ? 'bg-white/10 text-green-200 border border-green-400 hover:scale-105 hover:border-purple-400 hover:shadow-lg cursor-pointer' : ''}
+                                                            ${isSelected && !isCurrent ? 'opacity-40 pointer-events-none' : ''}
+                                                        `}
+                                                        onClick={() => {
+                                                            if (!isBooked && activePassengerIdx !== null && (!isSelected || isCurrent)) {
+                                                                const updated = [...selectedSeats];
+                                                                updated[activePassengerIdx] = seat.id;
+                                                                setSelectedSeats(updated);
+                                                                setSeatModalOpen(false);
+                                                            }
+                                                        }}
+                                                    >
+                                                        {seat.seatNumber}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <div className="text-purple-300">No seats available.</div>
+                                    )
+                                )}
+                            </div>
+                        </DialogContent>
+                    </Dialog>
 
                     {/* Passenger Details */}
                     <div className="mb-6 p-8 rounded-2xl bg-gradient-to-br from-[#1D1F2F]/80 via-[#2A1B3D]/80 to-[#1D1F2F]/80 border border-purple-500/30 shadow-xl backdrop-blur-md transition-all duration-300">

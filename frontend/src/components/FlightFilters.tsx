@@ -57,7 +57,7 @@ const FlightFilters = ({
   return (
     <div className="space-y-6">
       {/* Price Range */}
-      <Card>
+      <Card className="glassmorphic-bar border border-purple-500/30 bg-white/10 backdrop-blur-md shadow-md rounded-2xl transition-all duration-300 hover:shadow-lg hover:border-purple-400/50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center">
             <span className="w-5 h-5 mr-2 text-primary text-xl">₹</span>
@@ -71,7 +71,7 @@ const FlightFilters = ({
             max={70000}
             min={20000}
             step={2500}
-            className="w-full"
+            className="w-full accent-purple-500"
           />
           <div className="flex justify-between text-sm text-gray-600">
             <span>₹{priceRange[0].toLocaleString()}</span>
@@ -81,7 +81,7 @@ const FlightFilters = ({
       </Card>
 
       {/* Airlines */}
-      <Card>
+      <Card className="glassmorphic-bar border border-purple-500/30 bg-white/10 backdrop-blur-md shadow-md rounded-2xl transition-all duration-300 hover:shadow-lg hover:border-purple-400/50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center">
             <Plane className="w-5 h-5 mr-2 text-primary" />
@@ -108,7 +108,7 @@ const FlightFilters = ({
       </Card>
 
       {/* Departure Time */}
-      <Card>
+      <Card className="glassmorphic-bar border border-purple-500/30 bg-white/10 backdrop-blur-md shadow-md rounded-2xl transition-all duration-300 hover:shadow-lg hover:border-purple-400/50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg flex items-center">
             <Clock className="w-5 h-5 mr-2 text-primary" />
@@ -135,7 +135,7 @@ const FlightFilters = ({
       </Card>
 
       {/* Stops */}
-      <Card>
+      <Card className="glassmorphic-bar border border-purple-500/30 bg-white/10 backdrop-blur-md shadow-md rounded-2xl transition-all duration-300 hover:shadow-lg hover:border-purple-400/50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Stops</CardTitle>
         </CardHeader>
@@ -159,7 +159,7 @@ const FlightFilters = ({
       </Card>
 
       {/* Trip Duration */}
-      <Card>
+      <Card className="glassmorphic-bar border border-purple-500/30 bg-white/10 backdrop-blur-md shadow-md rounded-2xl transition-all duration-300 hover:shadow-lg hover:border-purple-400/50">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Trip Duration</CardTitle>
         </CardHeader>
@@ -170,7 +170,7 @@ const FlightFilters = ({
             max={30}
             min={2}
             step={1}
-            className="w-full"
+            className="w-full accent-purple-500"
           />
           <div className="flex justify-between text-sm text-gray-600">
             <span>4h</span>

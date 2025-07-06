@@ -1,5 +1,11 @@
 package com.AV.AirVista.Controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,13 +15,6 @@ import com.AV.AirVista.Repository.SeatRepository;
 import com.AV.AirVista.Service.FlightService;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("AirVista/seats")
@@ -29,7 +28,7 @@ public class SeatController {
     public ResponseEntity<List<Seat>> getSeatByFlight(@PathVariable Long flightId) {
         Optional<Flight> flight = flightService.getFlightById(flightId);
 
-        if (flight == null)
+        if (!flight.isPresent())
             return ResponseEntity.notFound().build();
 
         List<Seat> seats = seatRepo.findByFlight(flight);
